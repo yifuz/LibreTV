@@ -135,6 +135,11 @@ describe('applyEnvPresets', () => {
 });
 
 describe('applyEnvPresets · DEFAULT_RECOMMEND_SOURCE（issue #918）', () => {
+  it('the new Douban factory default still accepts an explicit deployment preset', async () => {
+    useAppStore.setState({ recommendSource: 'douban', recommendSourceTouched: false });
+    await applyEnvPresets(status({ defaultRecommendSource: 'bangumi' }));
+    expect(useAppStore.getState().recommendSource).toBe('bangumi');
+  });
   it('未配置时不改动推荐数据源', async () => {
     useAppStore.setState({ recommendSource: 'hot-list', recommendSourceTouched: false });
     await applyEnvPresets(status());

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { guardRequest } from '@/lib/api-guard';
-import { fetchDoubanRecommend } from '@/lib/douban';
+import { fetchDoubanBrowse, fetchDoubanRecommend } from '@/lib/douban';
+import { parseDoubanBrowseOptions } from '@/lib/douban-browse';
 
 export const runtime = 'nodejs';
 
@@ -10,6 +11,18 @@ export async function GET(req: Request) {
   if (guarded) return guarded;
 
   const url = new URL(req.url);
+  if (url.searchParams.has('category')) {
+    let options;
+    try { options = parseDoubanBrowseOptions(url.searchParams); }
+    catch (err) {
+      return NextResponse.json({ error: err instanceof Error ? err.message : '筛选参数无效' }, { status: 400 });
+    }
+    try { return NextResponse.json(await fetchDoubanBrowse(options)); }
+    catch (err) {
+      return NextResponse.json({ error: err instanceof Error ? err.message : '豆瓣推荐获取失败' }, { status: 502 });
+    }
+  }
+  // Keep the original type/tag API working for existing clients.
   const type = url.searchParams.get('type') === 'tv' ? 'tv' : 'movie';
   const tag = (url.searchParams.get('tag') || '热门').slice(0, 20);
   const pageStart = Math.max(0, parseInt(url.searchParams.get('pageStart') || '0', 10) || 0);

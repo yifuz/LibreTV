@@ -302,7 +302,7 @@ export const useAppStore = create<AppState>()(
       yellowFilter: true,
       adFilter: true,
       doubanEnabled: true,
-      recommendSource: 'hot-list',
+      recommendSource: 'douban',
       recommendSourceTouched: false,
       autoplayNext: true,
       // 直连优先：豆瓣封面有公共镜像 + 内置代理两级兜底（见 buildImageCandidates），
@@ -757,7 +757,7 @@ export const useAppStore = create<AppState>()(
       // v1：直播源新增归属字段、最近观看新增 sourceUrl。
       // v2：直播源归属改为多引用（fromSubscription 单值 → fromSubscriptions 数组）。
       // 此前未声明 version 的存量数据会被视为 v0 并走 migrate 补齐。
-      version: 2,
+      version: 3,
       migrate: (persisted, version) => {
         const state = { ...((persisted ?? {}) as Partial<AppState>) };
         if (!Array.isArray(state.liveRecent)) state.liveRecent = [];
@@ -779,6 +779,12 @@ export const useAppStore = create<AppState>()(
               fromSubscriptions,
             };
           });
+        }
+        // Local homepage upgrade: switch existing browsers once, preserving sources and playback state.
+        if (version < 3) {
+          state.recommendSource = 'douban';
+          state.recommendSourceTouched = true;
+          state.doubanEnabled = true;
         }
         return state as AppState;
       },

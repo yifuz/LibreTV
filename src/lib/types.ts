@@ -50,6 +50,7 @@ export interface DoubanItem {
   title: string;
   cover: string;
   rating?: string;
+  ratingCount?: number;
   isTv?: boolean;
 }
 

@@ -15,6 +15,22 @@ const store = () => useAppStore.getState();
 
 const list = (urls: string[]): Omit<SourceConfig, 'key'>[] => urls.map((url) => ({ name: url, url }));
 
+describe('Douban homepage settings upgrade', () => {
+  it('switches version 2 browsers once without replacing sources, selected keys or favorites', async () => {
+    const saved = { recommendSource: 'hot-list', recommendSourceTouched: true, doubanEnabled: false, customAPIs: [{ key: 'custom_0', name: 'My source', url: 'https://example.com/api' }], selectedKeys: ['custom_0'], liveSubscriptions: [], liveFavorites: ['https://example.com/live.m3u8'] };
+    const migrated = await useAppStore.persist.getOptions().migrate!(saved, 2) as typeof saved;
+    expect(migrated).toMatchObject({ recommendSource: 'douban', recommendSourceTouched: true, doubanEnabled: true });
+    expect(migrated.customAPIs).toEqual(saved.customAPIs);
+    expect(migrated.selectedKeys).toEqual(saved.selectedKeys);
+    expect(migrated.liveFavorites).toEqual(saved.liveFavorites);
+  });
+  it('preserves a later explicit recommendation choice', async () => {
+    const saved = { recommendSource: 'bangumi', recommendSourceTouched: true, liveSubscriptions: [] };
+    const migrated = await useAppStore.persist.getOptions().migrate!(saved, 3) as typeof saved;
+    expect(migrated.recommendSource).toBe('bangumi');
+  });
+});
+
 beforeEach(() => {
   useAppStore.setState({
     customAPIs: [],

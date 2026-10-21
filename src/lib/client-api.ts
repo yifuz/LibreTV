@@ -1,5 +1,6 @@
 'use client';
 
+import type { DoubanBrowseOptions, DoubanBrowseResponse } from './douban-browse';
 import type { SearchResponse, SearchStreamEvent, SourceSearchOutcome, VideoDetail, DoubanResponse, BangumiCalendarResponse, AuthStatusResponse, SourceConfig, SearchResultItem, LivePlaylistResponse, LiveEpgResponse, SourceListPayload, QualityProbeItem, QualityProbeResult } from './types';
 
 /**
@@ -196,9 +197,12 @@ export const api = {
     }
   },
 
-  douban: (type: 'movie' | 'tv', tag: string, pageStart: number, pageSize: number, signal?: AbortSignal) => {
-    const sp = new URLSearchParams({ type, tag, pageStart: String(pageStart), pageSize: String(pageSize) });
-    return request<DoubanResponse>(`/api/douban?${sp.toString()}`, { signal });
+  douban: (options: DoubanBrowseOptions, signal?: AbortSignal) => {
+    const sp = new URLSearchParams({
+      category: options.category, sort: options.sort, region: options.region, genre: options.genre, year: options.year,
+      start: String(options.start), limit: String(options.limit),
+    });
+    return request<DoubanBrowseResponse>(`/api/douban?${sp}`, { signal });
   },
 
   /** Bangumi 每日放送（免 key），首页推荐的另一数据源 */
