@@ -10,8 +10,11 @@ tsconfig.tsbuildinfo
 .github
 
 # 本地环境与日志
-.env
-.env*.local
+.env*
+.local
+source-pack
+LOCAL-DEPLOYMENT.md
+LibreTV-source-pack-*.zip
 *.log
 
 # 文档与编排文件（不参与镜像构建）

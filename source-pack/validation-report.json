@@ -1,0 +1,2931 @@
+{
+  "checkedAt": "2026-10-21T03:12:02.779Z",
+  "checkedAtShanghai": "2026-10-21 11:12:02 Asia/Shanghai",
+  "appVersion": "2.19.7",
+  "keywords": [
+    "葬送的芙莉莲",
+    "凡人修仙传",
+    "流浪地球"
+  ],
+  "sources": [
+    {
+      "name": "卧龙资源",
+      "url": "https://wolongzyw.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_3",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:02.803Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 747,
+          "error": "Unexpected token '<', \"<!-- 16442\"... is not valid JSON"
+        }
+      ],
+      "status": "failed",
+      "error": "Unexpected token '<', \"<!-- 16442\"... is not valid JSON",
+      "ms": 747
+    },
+    {
+      "name": "天涯影视",
+      "url": "https://tyyszy.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_1",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:02.802Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 774,
+          "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON"
+        }
+      ],
+      "status": "failed",
+      "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON",
+      "ms": 774
+    },
+    {
+      "name": "iKun资源",
+      "url": "https://ikunzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_4",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:03.551Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 222,
+          "error": "fetch failed"
+        }
+      ],
+      "status": "failed",
+      "error": "fetch failed",
+      "ms": 222
+    },
+    {
+      "name": "豆瓣资源",
+      "url": "https://caiji.dbzy5.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_0",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:02.802Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 964,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 0,
+          "ms": 424,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 0,
+          "ms": 417,
+          "error": null
+        }
+      ],
+      "status": "valid-empty",
+      "animeSearchVerified": false,
+      "ms": 1805,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 968,
+          "checkedAt": "2026-10-21T03:18:02.702Z"
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 956,
+          "checkedAt": "2026-10-21T03:19:11.451Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 431,
+          "checkedAt": "2026-10-21T03:18:03.558Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 427,
+          "checkedAt": "2026-10-21T03:18:03.985Z"
+        }
+      }
+    },
+    {
+      "name": "茅台资源",
+      "url": "https://caiji.maotaizy.cc/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_2",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:02.803Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 1404,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 0,
+          "ms": 804,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 0,
+          "ms": 793,
+          "error": null
+        }
+      ],
+      "status": "valid-empty",
+      "animeSearchVerified": false,
+      "ms": 3001,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 1393,
+          "checkedAt": "2026-10-21T03:18:03.128Z"
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 1383,
+          "checkedAt": "2026-10-21T03:19:11.879Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 818,
+          "checkedAt": "2026-10-21T03:18:04.753Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 839,
+          "checkedAt": "2026-10-21T03:18:05.592Z"
+        }
+      }
+    },
+    {
+      "name": "电影天堂",
+      "url": "http://caiji.dyttzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_6",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:03.774Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 3,
+          "ms": 331,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 2,
+          "ms": 204,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 4,
+          "ms": 172,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "7350",
+        "episodeCount": 28,
+        "url": "https://vip.dytt-hot.com/20250131/24912_e10e163d/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.460111"
+      },
+      "ms": 4160,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 4,
+          "matchingCount": 3,
+          "ms": 317,
+          "checkedAt": "2026-10-21T03:18:02.053Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "2354"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 7,
+          "matchingCount": 3,
+          "ms": 468,
+          "checkedAt": "2026-10-21T03:19:10.964Z",
+          "sample": {
+            "title": "庆余年 第二季",
+            "type": "国产剧",
+            "vodId": "35210"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 228,
+          "checkedAt": "2026-10-21T03:18:02.520Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "9097"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 3,
+          "matchingCount": 3,
+          "ms": 172,
+          "checkedAt": "2026-10-21T03:18:02.692Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "7350"
+          }
+        }
+      }
+    },
+    {
+      "name": "量子资源",
+      "url": "https://cj.lzcaiji.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_9",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:07.934Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 229,
+          "error": "fetch failed"
+        }
+      ],
+      "status": "failed",
+      "error": "fetch failed",
+      "ms": 229
+    },
+    {
+      "name": "量子影视",
+      "url": "https://cj.lziapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_5",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:03.577Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 3,
+          "ms": 783,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 12,
+          "ms": 745,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 7,
+          "ms": 470,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "72500",
+        "episodeCount": 28,
+        "url": "https://v.cdnlz14.com/20230930/29887_2e6cf8c7/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 46,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.487222",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.400000"
+      },
+      "ms": 5409,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 7,
+          "matchingCount": 3,
+          "ms": 693,
+          "checkedAt": "2026-10-21T03:18:02.429Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "14547"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 3,
+          "matchingCount": 2,
+          "ms": 1120,
+          "checkedAt": "2026-10-21T03:19:11.617Z",
+          "sample": {
+            "title": "庆余年第二季",
+            "type": "国产剧",
+            "vodId": "88770"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 585,
+          "checkedAt": "2026-10-21T03:18:03.614Z",
+          "sample": {
+            "title": "你好，星期六",
+            "type": "大陆综艺",
+            "vodId": "80159"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 3,
+          "matchingCount": 2,
+          "ms": 644,
+          "checkedAt": "2026-10-21T03:18:04.258Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "72500"
+          }
+        }
+      }
+    },
+    {
+      "name": "卧龙影视",
+      "url": "https://collect.wolongzyw.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_11",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:08.987Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 751,
+          "error": "Unexpected token '<', \"<!-- 94549\"... is not valid JSON"
+        }
+      ],
+      "status": "failed",
+      "error": "Unexpected token '<', \"<!-- 94549\"... is not valid JSON",
+      "ms": 751
+    },
+    {
+      "name": "猫眼资源",
+      "url": "https://api.maoyanapi.top/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_8",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:05.805Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 3,
+          "ms": 509,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 2,
+          "ms": 105,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 3,
+          "ms": 99,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "134091",
+        "episodeCount": 42,
+        "url": "https://play.maoyanplay.top/20250727/8bA1deoK/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 48,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.566833",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.566833"
+      },
+      "ms": 4338,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 3,
+          "matchingCount": 3,
+          "ms": 190,
+          "checkedAt": "2026-10-21T03:18:02.884Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "123736"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 274,
+          "checkedAt": "2026-10-21T03:19:11.241Z",
+          "sample": {
+            "title": "庆余年 第一季",
+            "type": "国产剧",
+            "vodId": "120975"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 433,
+          "checkedAt": "2026-10-21T03:18:03.424Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "156179"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 3,
+          "matchingCount": 3,
+          "ms": 106,
+          "checkedAt": "2026-10-21T03:18:03.530Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "134091"
+          }
+        }
+      }
+    },
+    {
+      "name": "优质资源",
+      "url": "https://api.yzzy-api.com/inc/apijson.php",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_7",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:04.608Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 8012,
+          "error": "The operation was aborted due to timeout"
+        }
+      ],
+      "status": "failed",
+      "error": "The operation was aborted due to timeout",
+      "ms": 8012
+    },
+    {
+      "name": "360 资源",
+      "url": "https://360zy.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_10",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:08.164Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1104,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 11,
+          "ms": 283,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 3,
+          "ms": 315,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "57133",
+        "episodeCount": 28,
+        "url": "https://vod1.maowushi.com/20250202/CaIhei8G/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.483422",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.441711"
+      },
+      "ms": 4612,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 3,
+          "matchingCount": 3,
+          "ms": 411,
+          "checkedAt": "2026-10-21T03:18:03.942Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "22928"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 3,
+          "matchingCount": 3,
+          "ms": 444,
+          "checkedAt": "2026-10-21T03:19:11.687Z",
+          "sample": {
+            "title": "庆余年第二季",
+            "type": "国产剧",
+            "vodId": "57767"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 1047,
+          "checkedAt": "2026-10-21T03:18:05.269Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "71488"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 266,
+          "checkedAt": "2026-10-21T03:18:05.535Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "57133"
+          }
+        }
+      }
+    },
+    {
+      "name": "极速资源",
+      "url": "https://jszyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_12",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:09.739Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 922,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 501,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 555,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "45722",
+        "episodeCount": 28,
+        "url": "https://vv.jisuzyv.com/play/6dBmEPYb/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 5271,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 766,
+          "checkedAt": "2026-10-21T03:18:04.752Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "23195"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 0,
+          "ms": 846,
+          "checkedAt": "2026-10-21T03:19:12.298Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 615,
+          "checkedAt": "2026-10-21T03:18:05.922Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 531,
+          "checkedAt": "2026-10-21T03:18:06.453Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "45722"
+          }
+        }
+      }
+    },
+    {
+      "name": "魔都资源",
+      "url": "https://www.mdzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_13",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:10.144Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1013,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 10,
+          "ms": 493,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 4,
+          "ms": 472,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "6414",
+        "episodeCount": 28,
+        "url": "https://play.modujx10.com/20231028/3BMRArnT/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (Main) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.421333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.400000"
+      },
+      "ms": 5553,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 4,
+          "matchingCount": 3,
+          "ms": 795,
+          "checkedAt": "2026-10-21T03:18:05.054Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "20148"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 3,
+          "matchingCount": 2,
+          "ms": 863,
+          "checkedAt": "2026-10-21T03:19:12.481Z",
+          "sample": {
+            "title": "庆余年",
+            "type": "国产剧",
+            "vodId": "16302"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 677,
+          "checkedAt": "2026-10-21T03:18:06.163Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "9229"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 434,
+          "checkedAt": "2026-10-21T03:18:06.597Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "6414"
+          }
+        }
+      }
+    },
+    {
+      "name": "最大点播",
+      "url": "https://zuidazy.me/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_17",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:15.698Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 213,
+          "error": "fetch failed"
+        }
+      ],
+      "status": "failed",
+      "error": "fetch failed",
+      "ms": 213
+    },
+    {
+      "name": "无尽资源",
+      "url": "https://api.wujinapi.me/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_18",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:15.912Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 544,
+          "error": "HTTP 403"
+        }
+      ],
+      "status": "failed",
+      "error": "HTTP 403",
+      "ms": 544
+    },
+    {
+      "name": "非凡资源",
+      "url": "https://api.ffzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_14",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:12.621Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 486,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 3,
+          "ms": 227,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 4,
+          "ms": 201,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "60723",
+        "episodeCount": 28,
+        "url": "https://vip.ffzy-plays.com/20230930/17311_4c0bc7b2/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 46,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.487222",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.400000"
+      },
+      "ms": 3916,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 4,
+          "matchingCount": 3,
+          "ms": 482,
+          "checkedAt": "2026-10-21T03:18:06.018Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "1629"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 4,
+          "ms": 640,
+          "checkedAt": "2026-10-21T03:19:12.328Z",
+          "sample": {
+            "title": "庆余年第二季",
+            "type": "国产剧",
+            "vodId": "66696"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 274,
+          "checkedAt": "2026-10-21T03:18:06.557Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "7088"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 193,
+          "checkedAt": "2026-10-21T03:18:06.750Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "60723"
+          }
+        }
+      }
+    },
+    {
+      "name": "暴风资源",
+      "url": "https://bfzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_15",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:12.777Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1007,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 196,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 7,
+          "ms": 531,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "53475",
+        "episodeCount": 28,
+        "url": "https://c1.rrcdnbf5.com/video/zangsongdefulilian/第01集/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.483422",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462422"
+      },
+      "ms": 5033,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 7,
+          "matchingCount": 3,
+          "ms": 2267,
+          "checkedAt": "2026-10-21T03:18:07.860Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "20717"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 10,
+          "matchingCount": 4,
+          "ms": 909,
+          "checkedAt": "2026-10-21T03:19:12.789Z",
+          "sample": {
+            "title": "庆余年 第一季",
+            "type": "国产剧",
+            "vodId": "139597"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 956,
+          "checkedAt": "2026-10-21T03:18:09.438Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "89007"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 726,
+          "checkedAt": "2026-10-21T03:18:10.164Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "53475"
+          }
+        }
+      }
+    },
+    {
+      "name": "旺旺短剧",
+      "url": "https://wwzy.tv/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_21",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:17.811Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 214,
+          "error": "fetch failed"
+        }
+      ],
+      "status": "failed",
+      "error": "fetch failed",
+      "ms": 214
+    },
+    {
+      "name": "新浪资源",
+      "url": "https://api.xinlangapi.com/xinlangapi.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_20",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:16.538Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1144,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 466,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 524,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "182758",
+        "episodeCount": 28,
+        "url": "https://play.xluuss.com/play/Pdyyk9nd/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 7382,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 863,
+          "checkedAt": "2026-10-21T03:18:07.317Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "43851"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 3,
+          "ms": 1139,
+          "checkedAt": "2026-10-21T03:19:13.438Z",
+          "sample": {
+            "title": "庆余年 第二季",
+            "type": "大陆剧",
+            "vodId": "110772"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 739,
+          "checkedAt": "2026-10-21T03:18:08.791Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 745,
+          "checkedAt": "2026-10-21T03:18:09.536Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "182758"
+          }
+        }
+      }
+    },
+    {
+      "name": "最大资源",
+      "url": "https://api.zuidapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_16",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:15.011Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1824,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 4,
+          "ms": 1505,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 7,
+          "ms": 1749,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "48833",
+        "episodeCount": 28,
+        "url": "https://v3.zuidazym3u8.com/yyv3/202309/30/Q0r4Q1x7yV2/video/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 49,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.456778"
+      },
+      "ms": 10405,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 7,
+          "matchingCount": 3,
+          "ms": 548,
+          "checkedAt": "2026-10-21T03:18:07.146Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "7042"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 7,
+          "matchingCount": 3,
+          "ms": 568,
+          "checkedAt": "2026-10-21T03:19:12.897Z",
+          "sample": {
+            "title": "庆余年第二季",
+            "type": "国产剧",
+            "vodId": "74733"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 1689,
+          "checkedAt": "2026-10-21T03:18:09.036Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "33044"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 200,
+          "checkedAt": "2026-10-21T03:18:09.236Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "48833"
+          }
+        }
+      }
+    },
+    {
+      "name": "旺旺资源",
+      "url": "https://api.wwzy.tv/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_22",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:18.026Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 8013,
+          "error": "The operation was aborted due to timeout"
+        }
+      ],
+      "status": "failed",
+      "error": "The operation was aborted due to timeout",
+      "ms": 8013
+    },
+    {
+      "name": "无尽影视",
+      "url": "https://api.wujinapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_19",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:16.457Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 944,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 4,
+          "ms": 600,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 592,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "56847",
+        "episodeCount": 28,
+        "url": "https://v3.ppqrrs.com/wjv3/202309/30/Q0r4Q1x7yV2/video/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 49,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1280x720 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.456778"
+      },
+      "ms": 10465,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 562,
+          "checkedAt": "2026-10-21T03:18:07.313Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "25734"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 0,
+          "matchingCount": 0,
+          "error": "The operation was aborted due to timeout"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "error": "The operation was aborted due to timeout"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 564,
+          "checkedAt": "2026-10-21T03:18:23.889Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "56847"
+          }
+        }
+      }
+    },
+    {
+      "name": "金鹰资源",
+      "url": "https://jyzyapi.com/provide/vod/from/jinyingyun/at/json",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_26",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:26.923Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 972,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 662,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 363,
+          "error": null
+        }
+      ],
+      "status": "detail-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "48658",
+        "episodeCount": 28,
+        "url": "https://hd.kuktxu.com/play/kazzl7ya"
+      },
+      "media": {
+        "ok": false,
+        "exitCode": 3199971767,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 0,
+        "video": null,
+        "audio": null,
+        "error": "[in#0 @ 000001fbf77cb140] Error opening input: Invalid data found when processing input Error opening input file http://localhost:8080/api/proxy/https%3A%2F%2Fhd.kuktxu.com%2Fplay%2Fkazzl7ya. Error opening input files: Invalid data found when processing input"
+      },
+      "ms": 2998,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 941,
+          "checkedAt": "2026-10-21T03:18:10.178Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "17200"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 0,
+          "ms": 558,
+          "checkedAt": "2026-10-21T03:19:13.053Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 637,
+          "checkedAt": "2026-10-21T03:18:11.355Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 618,
+          "checkedAt": "2026-10-21T03:18:11.973Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "48658"
+          }
+        }
+      }
+    },
+    {
+      "name": "豪华资源",
+      "url": "https://hhzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_23",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:23.920Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 663,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 203,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 256,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "70389",
+        "episodeCount": 28,
+        "url": "https://play.hhuus.com/play/9aAlOMle/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 6057,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 555,
+          "checkedAt": "2026-10-21T03:18:10.092Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "35873"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 0,
+          "ms": 597,
+          "checkedAt": "2026-10-21T03:19:13.387Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 284,
+          "checkedAt": "2026-10-21T03:18:10.659Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 291,
+          "checkedAt": "2026-10-21T03:18:10.950Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "70389"
+          }
+        }
+      }
+    },
+    {
+      "name": "速播资源",
+      "url": "https://subocaiji.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_24",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:25.417Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 637,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 274,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 239,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "48126",
+        "episodeCount": 28,
+        "url": "https://play.subokk.com/play/Pdyyk9nd/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 6018,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 572,
+          "checkedAt": "2026-10-21T03:18:10.737Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "8040"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 3,
+          "ms": 593,
+          "checkedAt": "2026-10-21T03:19:13.491Z",
+          "sample": {
+            "title": "庆余年 第二季",
+            "type": "大陆剧",
+            "vodId": "59631"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 227,
+          "checkedAt": "2026-10-21T03:18:11.203Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 261,
+          "checkedAt": "2026-10-21T03:18:11.464Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "48126"
+          }
+        }
+      }
+    },
+    {
+      "name": "金鹰点播",
+      "url": "https://jinyingzy.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_25",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:26.040Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1387,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 444,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 673,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "48658",
+        "episodeCount": 28,
+        "url": "https://hd.kuktxu.com/play/kazzl7ya/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 6309,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 833,
+          "checkedAt": "2026-10-21T03:18:11.785Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "17200"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 0,
+          "ms": 981,
+          "checkedAt": "2026-10-21T03:19:14.036Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 651,
+          "checkedAt": "2026-10-21T03:18:13.080Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 668,
+          "checkedAt": "2026-10-21T03:18:13.748Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "48658"
+          }
+        }
+      }
+    },
+    {
+      "name": "U酷影视",
+      "url": "https://api.ukuapi88.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_28",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:29.978Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 2207,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 2,
+          "ms": 451,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 379,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "动漫",
+        "vodId": "48715",
+        "episodeCount": 28,
+        "url": "https://ukzy.ukubf4.com/20230930/e9p2KvQn/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1280x720 [SAR 1:1 DAR 16:9], 30 fps, 30 tbr, 90k tbn, start 1.466667",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.410667"
+      },
+      "ms": 6409,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 5,
+          "ms": 714,
+          "checkedAt": "2026-10-21T03:18:12.179Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "46777"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 3,
+          "matchingCount": 3,
+          "ms": 755,
+          "checkedAt": "2026-10-21T03:19:14.144Z",
+          "sample": {
+            "title": "庆余年",
+            "type": "国产剧",
+            "vodId": "47645"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 1944,
+          "checkedAt": "2026-10-21T03:18:14.512Z",
+          "sample": {
+            "title": "你好星期六 纳凉企划",
+            "type": "综艺",
+            "vodId": "43031"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 368,
+          "checkedAt": "2026-10-21T03:18:14.880Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "动漫",
+            "vodId": "48715"
+          }
+        }
+      }
+    },
+    {
+      "name": "飘零资源",
+      "url": "https://p2100.net/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_27",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:29.922Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1044,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 4,
+          "ms": 596,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 4,
+          "ms": 429,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "动漫",
+        "vodId": "49869",
+        "episodeCount": 28,
+        "url": "https://v3.ppqrrs.com/wjv3/202309/30/Q0r4Q1x7yV2/video/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 49,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1280x720 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.456778"
+      },
+      "ms": 8165,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 4,
+          "matchingCount": 3,
+          "ms": 764,
+          "checkedAt": "2026-10-21T03:18:13.813Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "4910"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 3,
+          "ms": 6,
+          "checkedAt": "2026-10-21T03:19:13.445Z",
+          "sample": {
+            "title": "庆余年第二季",
+            "type": "国产剧",
+            "vodId": "53791"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 636,
+          "checkedAt": "2026-10-21T03:18:14.892Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "综艺",
+            "vodId": "853"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 417,
+          "checkedAt": "2026-10-21T03:18:15.309Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "动漫",
+            "vodId": "49869"
+          }
+        }
+      }
+    },
+    {
+      "name": "山海资源",
+      "url": "https://zy.sh0o.cn/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_32",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:38.088Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 12,
+          "error": "fetch failed"
+        }
+      ],
+      "status": "failed",
+      "error": "fetch failed",
+      "ms": 12
+    },
+    {
+      "name": "红牛资源",
+      "url": "https://www.hongniuzy2.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_30",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:32.349Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1006,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 629,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 356,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "145104",
+        "episodeCount": 28,
+        "url": "https://hn.bfvvs.com/play/DdwwgK8d/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 5930,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 1068,
+          "checkedAt": "2026-10-21T03:18:14.817Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "14297"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 3,
+          "ms": 5,
+          "checkedAt": "2026-10-21T03:19:13.453Z",
+          "sample": {
+            "title": "庆余年 第二季",
+            "type": "国产剧",
+            "vodId": "90305"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 660,
+          "checkedAt": "2026-10-21T03:18:16.020Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 499,
+          "checkedAt": "2026-10-21T03:18:16.519Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "145104"
+          }
+        }
+      }
+    },
+    {
+      "name": "索尼资源",
+      "url": "https://suoniapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/666zmy/moontv-v0/blob/main/config.json",
+      "key": "archive_34",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:38.280Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 558,
+          "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON"
+        }
+      ],
+      "status": "failed",
+      "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON",
+      "ms": 558
+    },
+    {
+      "name": "樱花资源",
+      "url": "https://m3u8.apiyhzy.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/gi0rr/chengxueli_maoTV/blob/main/44.txt",
+      "key": "archive_33",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:38.101Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 740,
+          "error": "HTTP 403"
+        }
+      ],
+      "status": "failed",
+      "error": "HTTP 403",
+      "ms": 740
+    },
+    {
+      "name": "光速资源",
+      "url": "https://api.guangsuapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_29",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:31.435Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 1068,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 521,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 499,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "176331",
+        "episodeCount": 28,
+        "url": "https://v.gsuus.com/play/7axxj2Ba/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 7830,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 706,
+          "checkedAt": "2026-10-21T03:18:15.587Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "41107"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 3,
+          "ms": 5,
+          "checkedAt": "2026-10-21T03:19:13.460Z",
+          "sample": {
+            "title": "庆余年 第二季",
+            "type": "大陆剧",
+            "vodId": "113846"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 683,
+          "checkedAt": "2026-10-21T03:18:16.720Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 641,
+          "checkedAt": "2026-10-21T03:18:17.361Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "176331"
+          }
+        }
+      }
+    },
+    {
+      "name": "快车资源",
+      "url": "https://caiji.kuaichezy.org/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/heroaku/TVboxo/blob/main/apit.json",
+      "key": "archive_35",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:38.840Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 0,
+          "ms": 784,
+          "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON"
+        }
+      ],
+      "status": "failed",
+      "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON",
+      "ms": 784
+    },
+    {
+      "name": "魔都动漫",
+      "url": "https://caiji.moduapi.cc/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/Wolfun/luna-moon-tv-api/blob/main/jingjian.json",
+      "key": "archive_31",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:36.388Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 799,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 10,
+          "ms": 640,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 4,
+          "ms": 450,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日韩动漫",
+        "vodId": "6414",
+        "episodeCount": 28,
+        "url": "https://play.modujx10.com/20231028/3BMRArnT/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (Main) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.421333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.400000"
+      },
+      "ms": 5407,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 4,
+          "matchingCount": 3,
+          "ms": 1220,
+          "checkedAt": "2026-10-21T03:18:16.530Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "20148"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 3,
+          "matchingCount": 2,
+          "ms": 3,
+          "checkedAt": "2026-10-21T03:19:13.466Z",
+          "sample": {
+            "title": "庆余年",
+            "type": "国产剧",
+            "vodId": "16302"
+          }
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 1,
+          "matchingCount": 1,
+          "ms": 460,
+          "checkedAt": "2026-10-21T03:18:17.459Z",
+          "sample": {
+            "title": "你好星期六",
+            "type": "大陆综艺",
+            "vodId": "9229"
+          }
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 457,
+          "checkedAt": "2026-10-21T03:18:17.916Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日韩动漫",
+            "vodId": "6414"
+          }
+        }
+      }
+    },
+    {
+      "name": "金鹰资源（标准接口）",
+      "url": "https://jyzyapi.com/api.php/provide/vod",
+      "discoveredFrom": "https://github.com/tushen6/Tomorrow/blob/master/caiji.json",
+      "key": "archive_36",
+      "isAdult": false,
+      "checkedAt": "2026-10-21T03:12:38.853Z",
+      "searches": [
+        {
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "ms": 818,
+          "error": null
+        },
+        {
+          "keyword": "凡人修仙传",
+          "count": 5,
+          "ms": 372,
+          "error": null
+        },
+        {
+          "keyword": "流浪地球",
+          "count": 5,
+          "ms": 450,
+          "error": null
+        }
+      ],
+      "status": "media-verified",
+      "animeSearchVerified": true,
+      "sample": {
+        "title": "葬送的芙莉莲",
+        "type": "日本动漫",
+        "vodId": "48658",
+        "episodeCount": 28,
+        "url": "https://hd.kuktxu.com/play/kazzl7ya/index.m3u8"
+      },
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 47,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      },
+      "ms": 5148,
+      "contentChecks": {
+        "movies": {
+          "category": "电影",
+          "keyword": "流浪地球",
+          "count": 5,
+          "matchingCount": 3,
+          "ms": 867,
+          "checkedAt": "2026-10-21T03:18:17.387Z",
+          "sample": {
+            "title": "流浪地球",
+            "type": "科幻片",
+            "vodId": "17200"
+          }
+        },
+        "tv": {
+          "category": "电视剧",
+          "keyword": "庆余年",
+          "count": 8,
+          "matchingCount": 0,
+          "ms": 6,
+          "checkedAt": "2026-10-21T03:19:13.476Z"
+        },
+        "variety": {
+          "category": "综艺",
+          "keyword": "你好星期六",
+          "count": 0,
+          "matchingCount": 0,
+          "ms": 501,
+          "checkedAt": "2026-10-21T03:18:18.377Z"
+        },
+        "anime": {
+          "category": "动漫",
+          "keyword": "葬送的芙莉莲",
+          "count": 2,
+          "matchingCount": 2,
+          "ms": 486,
+          "checkedAt": "2026-10-21T03:18:18.863Z",
+          "sample": {
+            "title": "葬送的芙莉莲",
+            "type": "日本动漫",
+            "vodId": "48658"
+          }
+        }
+      }
+    }
+  ],
+  "liveSources": [
+    {
+      "name": "iptv-org 中国频道",
+      "url": "https://iptv-org.github.io/iptv/countries/cn.m3u",
+      "discoveredFrom": "https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md",
+      "checkedAt": "2026-10-21T03:12:44.002Z",
+      "status": "media-verified",
+      "channelCount": 149,
+      "groupCount": 26,
+      "probes": [
+        {
+          "name": "CCTV-1 (720p)",
+          "url": "http://74.91.26.218:82/live/cctv1hd.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 377,
+          "level": "segment",
+          "kbps": 1192
+        },
+        {
+          "name": "CCTV+ 1 (600p) [Not 24/7]",
+          "url": "https://cd-live-stream.news.cctvplus.com/live/smil:CHANNEL1.smil/playlist.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 103,
+          "level": "segment",
+          "kbps": 5323
+        },
+        {
+          "name": "CCTV+ 2 (600p) [Not 24/7]",
+          "url": "https://cd-live-stream.news.cctvplus.com/live/smil:CHANNEL2.smil/playlist.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 72,
+          "level": "segment"
+        },
+        {
+          "name": "CCTV-1 HD (1080p)",
+          "url": "http://69.30.245.50/live/cctv1.m3u8",
+          "ok": false,
+          "ms": 5001,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "name": "CCTV-2 (720p)",
+          "url": "http://74.91.26.218:82/live/cctv2hd.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 190,
+          "level": "segment",
+          "kbps": 1145
+        }
+      ],
+      "mediaSampleName": "CCTV-1 (720p)",
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 58,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1280x720, 30 fps, 30 tbr, 90k tbn, start 42757.431900",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 42757.379456"
+      }
+    },
+    {
+      "name": "iptv-org 中文频道",
+      "url": "https://iptv-org.github.io/iptv/languages/zho.m3u",
+      "discoveredFrom": "https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md",
+      "checkedAt": "2026-10-21T03:12:44.002Z",
+      "status": "media-verified",
+      "channelCount": 218,
+      "groupCount": 30,
+      "probes": [
+        {
+          "name": "CCTV-1 (720p)",
+          "url": "http://74.91.26.218:82/live/cctv1hd.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 190,
+          "level": "segment",
+          "kbps": 1233
+        },
+        {
+          "name": "CCTV+ 1 (600p) [Not 24/7]",
+          "url": "https://cd-live-stream.news.cctvplus.com/live/smil:CHANNEL1.smil/playlist.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 47,
+          "level": "segment",
+          "kbps": 18049
+        },
+        {
+          "name": "CCTV+ 2 (600p) [Not 24/7]",
+          "url": "https://cd-live-stream.news.cctvplus.com/live/smil:CHANNEL2.smil/playlist.m3u8",
+          "ok": false,
+          "status": 404,
+          "ms": 59,
+          "level": "segment",
+          "error": "分片响应 404"
+        },
+        {
+          "name": "CCTV-1 HD (1080p)",
+          "url": "http://69.30.245.50/live/cctv1.m3u8",
+          "ok": false,
+          "ms": 5001,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "name": "CCTV-2 (720p)",
+          "url": "http://74.91.26.218:82/live/cctv2hd.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 194,
+          "level": "segment",
+          "kbps": 1302
+        }
+      ],
+      "mediaSampleName": "CCTV-1 (720p)",
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 48,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1280x720 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 2380.253156",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 2380.175789"
+      }
+    },
+    {
+      "name": "iptv-org 动画频道",
+      "url": "https://iptv-org.github.io/iptv/categories/animation.m3u",
+      "discoveredFrom": "https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md",
+      "checkedAt": "2026-10-21T03:12:51.291Z",
+      "status": "playlist-verified",
+      "channelCount": 171,
+      "groupCount": 14,
+      "probes": [
+        {
+          "name": "Animation+ (1080p) [Geo-blocked]",
+          "url": "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8",
+          "ok": false,
+          "status": 403,
+          "ms": 689,
+          "error": "入口响应 403"
+        },
+        {
+          "name": "Anime Vision (1080p)",
+          "url": "https://d1ujfw1zyymzyd.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-a6fukwkbxmex8/live/fast-channel-animevision-64527ec0/fast-channel-animevision-64527ec0.m3u8",
+          "ok": false,
+          "status": 504,
+          "ms": 746,
+          "error": "入口响应 504"
+        },
+        {
+          "name": "Anime Vision Classics (1080p)",
+          "url": "https://d82pyvmcw2kdc.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-swfivzrzwamaq/live/fast-channel-animevisionclassics-efc8dc6d/fast-channel-animevisionclassics-efc8dc6d.m3u8",
+          "ok": false,
+          "status": 504,
+          "ms": 733,
+          "error": "入口响应 504"
+        },
+        {
+          "name": "Anime x HIDIVE",
+          "url": "https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8",
+          "ok": false,
+          "status": 400,
+          "ms": 1259,
+          "error": "入口响应 400"
+        },
+        {
+          "name": "Cartoon Classics",
+          "url": "https://daiconnect.com/live/hls/tvup/rk-cartoonclassics/578f4b7eb725168349ec0af81b21d388/index.m3u8",
+          "ok": false,
+          "status": 403,
+          "ms": 1453,
+          "level": "segment",
+          "error": "分片响应 403"
+        }
+      ]
+    },
+    {
+      "name": "iptv-org 新闻频道",
+      "url": "https://iptv-org.github.io/iptv/categories/news.m3u",
+      "discoveredFrom": "https://github.com/iptv-org/iptv/blob/master/PLAYLISTS.md",
+      "checkedAt": "2026-10-21T03:12:51.634Z",
+      "status": "media-verified",
+      "channelCount": 1016,
+      "groupCount": 26,
+      "probes": [
+        {
+          "name": "Al Jazeera 2 (1080p)",
+          "url": "https://live-hls-web-aja2-gcp.thehlive.com/AJA2/index.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 222,
+          "level": "segment",
+          "codec": "avc1.640028,mp4a.40.2",
+          "kbps": 3278
+        },
+        {
+          "name": "Al Jazeera (1080p)",
+          "url": "https://live-hls-apps-aja-fa.getaj.net/AJA/01.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 789,
+          "level": "segment",
+          "kbps": 709
+        },
+        {
+          "name": "Al Jazeera English (1080p)",
+          "url": "https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 3551,
+          "level": "segment",
+          "codec": "avc1.640028,mp4a.40.2",
+          "kbps": 2877
+        },
+        {
+          "name": "Al Jazeera English HD (576p)",
+          "url": "http://stream.mcquack.net/131/index.m3u8",
+          "ok": true,
+          "status": 200,
+          "ms": 214,
+          "level": "segment",
+          "codec": "avc1.4d4028,mp4a.40.2",
+          "kbps": 907
+        },
+        {
+          "name": "Al Jazeera Mubasher 24 (1080p)",
+          "url": "https://live-hls-apps-ajm24-fa.getaj.net/AJM24/index.m3u8",
+          "ok": true,
+          "status": 206,
+          "ms": 3062,
+          "level": "segment",
+          "codec": "avc1.640028,mp4a.40.2",
+          "kbps": 3453
+        }
+      ],
+      "mediaSampleName": "Al Jazeera 2 (1080p)",
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "timedOut": false,
+        "sampleSeconds": 2,
+        "frames": 50,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv), 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 10719.500733",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 10719.511733"
+      }
+    }
+  ],
+  "completedAt": "2026-10-21T03:19:19.021Z",
+  "categorySamples": [
+    {
+      "category": "movies",
+      "categoryName": "电影",
+      "source": "暴风资源",
+      "sourceUrl": "https://bfzyapi.com/api.php/provide/vod",
+      "title": "流浪地球",
+      "type": "科幻片",
+      "vodId": "20717",
+      "episodeCount": 1,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 45,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1280x504, 24 fps, 24 tbr, 90k tbn, start 1.506000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.400000"
+      }
+    },
+    {
+      "category": "movies",
+      "categoryName": "电影",
+      "source": "非凡资源",
+      "sourceUrl": "https://api.ffzyapi.com/api.php/provide/vod",
+      "title": "流浪地球",
+      "type": "科幻片",
+      "vodId": "1629",
+      "episodeCount": 1,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 45,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1280x504, 24 fps, 24 tbr, 90k tbn, start 1.506000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.400000"
+      }
+    },
+    {
+      "category": "movies",
+      "categoryName": "电影",
+      "source": "新浪资源",
+      "sourceUrl": "https://api.xinlangapi.com/xinlangapi.php/provide/vod",
+      "title": "流浪地球",
+      "type": "科幻片",
+      "vodId": "43851",
+      "episodeCount": 1,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 47,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x752, 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.460111"
+      }
+    },
+    {
+      "category": "variety",
+      "categoryName": "综艺",
+      "source": "暴风资源",
+      "sourceUrl": "https://bfzyapi.com/api.php/provide/vod",
+      "title": "你好星期六",
+      "type": "大陆综艺",
+      "vodId": "89007",
+      "episodeCount": 511,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 49,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.433778"
+      }
+    },
+    {
+      "category": "variety",
+      "categoryName": "综艺",
+      "source": "非凡资源",
+      "sourceUrl": "https://api.ffzyapi.com/api.php/provide/vod",
+      "title": "你好星期六",
+      "type": "大陆综艺",
+      "vodId": "7088",
+      "episodeCount": 487,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 49,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.457000"
+      }
+    },
+    {
+      "category": "variety",
+      "categoryName": "综艺",
+      "source": "量子影视",
+      "sourceUrl": "https://cj.lziapi.com/api.php/provide/vod",
+      "title": "你好，星期六",
+      "type": "大陆综艺",
+      "vodId": "80159",
+      "episodeCount": 548,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 49,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1080x606 [SAR 404:405 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.457000"
+      }
+    },
+    {
+      "category": "anime",
+      "categoryName": "动漫",
+      "source": "非凡资源",
+      "sourceUrl": "https://api.ffzyapi.com/api.php/provide/vod",
+      "title": "葬送的芙莉莲",
+      "type": "日韩动漫",
+      "vodId": "60723",
+      "episodeCount": 28,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 46,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.487222",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.400000"
+      }
+    },
+    {
+      "category": "anime",
+      "categoryName": "动漫",
+      "source": "暴风资源",
+      "sourceUrl": "https://bfzyapi.com/api.php/provide/vod",
+      "title": "葬送的芙莉莲",
+      "type": "日韩动漫",
+      "vodId": "53475",
+      "episodeCount": 28,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 47,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 23.98 fps, 23.98 tbr, 90k tbn, start 1.483422",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462422"
+      }
+    },
+    {
+      "category": "anime",
+      "categoryName": "动漫",
+      "source": "新浪资源",
+      "sourceUrl": "https://api.xinlangapi.com/xinlangapi.php/provide/vod",
+      "title": "葬送的芙莉莲",
+      "type": "日本动漫",
+      "vodId": "182758",
+      "episodeCount": 28,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 47,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      }
+    },
+    {
+      "category": "tv",
+      "categoryName": "电视剧",
+      "source": "非凡资源",
+      "sourceUrl": "https://api.ffzyapi.com/api.php/provide/vod",
+      "title": "庆余年第二季",
+      "type": "国产剧",
+      "vodId": "66696",
+      "episodeCount": 36,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 48,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080 [SAR 1:1 DAR 16:9], 25 fps, 25 tbr, 90k tbn, start 1.486222",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.400000"
+      }
+    },
+    {
+      "category": "tv",
+      "categoryName": "电视剧",
+      "source": "暴风资源",
+      "sourceUrl": "https://bfzyapi.com/api.php/provide/vod",
+      "title": "庆余年 第一季",
+      "type": "国产剧",
+      "vodId": "139597",
+      "episodeCount": 46,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 49,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709), 1920x1080, 25 fps, 25 tbr, 90k tbn, start 1.480000",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 44100 Hz, stereo, fltp, start 1.440000"
+      }
+    },
+    {
+      "category": "tv",
+      "categoryName": "电视剧",
+      "source": "新浪资源",
+      "sourceUrl": "https://api.xinlangapi.com/xinlangapi.php/provide/vod",
+      "title": "庆余年 第二季",
+      "type": "大陆剧",
+      "vodId": "110772",
+      "episodeCount": 36,
+      "media": {
+        "ok": true,
+        "exitCode": 0,
+        "frames": 47,
+        "sampleSeconds": 2,
+        "timedOut": false,
+        "video": "h264 (High) ([27][0][0][0] / 0x001B), yuv420p(tv, bt709/bt709/unknown), 1280x720 [SAR 1:1 DAR 16:9], 24 fps, 24 tbr, 90k tbn, start 1.483333",
+        "audio": "aac (LC) ([15][0][0][0] / 0x000F), 48000 Hz, stereo, fltp, start 1.462000"
+      }
+    }
+  ],
+  "categoryCheckedAt": "2026-10-21 11:19:19 Asia/Shanghai"
+}

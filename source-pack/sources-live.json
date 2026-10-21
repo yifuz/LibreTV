@@ -1,0 +1,23 @@
+{
+  "name": "LibreTV Source Pack - live",
+  "version": 2,
+  "sources": [],
+  "liveSources": [
+    {
+      "name": "iptv-org 中国频道",
+      "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"
+    },
+    {
+      "name": "iptv-org 中文频道",
+      "url": "https://iptv-org.github.io/iptv/languages/zho.m3u"
+    },
+    {
+      "name": "iptv-org 动画频道",
+      "url": "https://iptv-org.github.io/iptv/categories/animation.m3u"
+    },
+    {
+      "name": "iptv-org 新闻频道",
+      "url": "https://iptv-org.github.io/iptv/categories/news.m3u"
+    }
+  ]
+}

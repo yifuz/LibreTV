@@ -28,6 +28,7 @@ env:
 
 jobs:
   sync:
+    if: github.repository == 'LibreSpark/LibreTV'
     runs-on: ubuntu-latest
     env:
       # Docker Hub 凭据仅在配置了的仓库（upstream）存在；fork 仓库跳过 DH 侧

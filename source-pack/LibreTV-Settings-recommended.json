@@ -1,0 +1,8 @@
+{
+  "name": "LibreTV-Settings",
+  "time": "1792552759021",
+  "cfgVer": "2.0.0",
+  "data": {
+    "libretv-settings": "{\"state\":{\"customAPIs\":[{\"name\":\"魔都动漫\",\"url\":\"https://caiji.moduapi.cc/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_0\"},{\"name\":\"暴风资源\",\"url\":\"https://bfzyapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_1\"},{\"name\":\"非凡资源\",\"url\":\"https://api.ffzyapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_2\"},{\"name\":\"量子影视\",\"url\":\"https://cj.lziapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_3\"},{\"name\":\"新浪资源\",\"url\":\"https://api.xinlangapi.com/xinlangapi.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_4\"},{\"name\":\"极速资源\",\"url\":\"https://jszyapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_5\"},{\"name\":\"电影天堂\",\"url\":\"http://caiji.dyttzyapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_6\"},{\"name\":\"最大资源\",\"url\":\"https://api.zuidapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_7\"}],\"selectedKeys\":[\"custom_0\",\"custom_1\",\"custom_2\",\"custom_3\",\"custom_4\",\"custom_5\",\"custom_6\",\"custom_7\"],\"liveSubscriptions\":[{\"name\":\"iptv-org 中国频道\",\"url\":\"https://iptv-org.github.io/iptv/countries/cn.m3u\",\"fromSubscriptions\":[]}],\"liveSelectedUrls\":[\"https://iptv-org.github.io/iptv/countries/cn.m3u\"],\"subscriptions\":[],\"envKeysSeen\":[],\"liveEnvKeysSeen\":[],\"envSubsSeen\":[],\"sourceHealth\":{},\"qualityMap\":{},\"yellowFilter\":true,\"adFilter\":true},\"version\":2}"
+  }
+}

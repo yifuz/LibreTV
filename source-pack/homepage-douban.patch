@@ -1,0 +1,1078 @@
+diff --git a/src/app/api/douban/route.test.ts b/src/app/api/douban/route.test.ts
+new file mode 100644
+index 0000000..d136f0e
+--- /dev/null
++++ b/src/app/api/douban/route.test.ts
+@@ -0,0 +1,35 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++vi.mock('@/lib/douban', () => ({ fetchDoubanBrowse: vi.fn(), fetchDoubanRecommend: vi.fn() }));
++import { GET } from './route';
++import { fetchDoubanBrowse, fetchDoubanRecommend } from '@/lib/douban';
++import { SESSION_COOKIE, signSession } from '@/lib/auth';
++
++const oldPassword = process.env.PASSWORD;
++beforeEach(() => { vi.resetAllMocks(); process.env.PASSWORD = 'douban-route-test'; });
++afterEach(() => { if (oldPassword === undefined) delete process.env.PASSWORD; else process.env.PASSWORD = oldPassword; });
++const request = (query: string, authenticated = true) => new Request(`http://localhost/api/douban?${query}`, { headers: authenticated ? { cookie: `${SESSION_COOKIE}=${signSession().token}` } : {} });
++
++describe('Douban route', () => {
++  it('does not call upstream before authentication or after invalid filter input', async () => {
++    expect((await GET(request('category=movie', false))).status).toBe(401);
++    expect((await GET(request('category=variety&genre=科幻'))).status).toBe(400);
++    expect((await GET(request('category=movie&year=invalid'))).status).toBe(400);
++    expect(fetchDoubanBrowse).not.toHaveBeenCalled();
++  });
++  it('passes section filters and next-page metadata without changing them', async () => {
++    vi.mocked(fetchDoubanBrowse).mockResolvedValue({ items: [], nextStart: 48 });
++    const response = await GET(request('category=anime&sort=rating&region=日本&genre=奇幻&year=2024&start=24&limit=24'));
++    expect(response.status).toBe(200);
++    expect(fetchDoubanBrowse).toHaveBeenCalledWith({ category: 'anime', sort: 'rating', region: '日本', genre: '奇幻', year: '2024', start: 24, limit: 24 });
++    expect(await response.json()).toEqual({ items: [], nextStart: 48 });
++  });
++  it('keeps existing type/tag clients working', async () => {
++    vi.mocked(fetchDoubanRecommend).mockResolvedValue([]);
++    expect((await GET(request('type=tv&tag=综艺&pageStart=24&pageSize=24'))).status).toBe(200);
++    expect(fetchDoubanRecommend).toHaveBeenCalledWith('tv', '综艺', 24, 24);
++  });
++  it('returns a retryable error for a failed upstream', async () => {
++    vi.mocked(fetchDoubanBrowse).mockRejectedValue(new Error('豆瓣暂时不可用'));
++    expect((await GET(request('category=tv'))).status).toBe(502);
++  });
++});
+diff --git a/src/app/api/douban/route.ts b/src/app/api/douban/route.ts
+index 5a4f86c..29cb1c2 100644
+--- a/src/app/api/douban/route.ts
++++ b/src/app/api/douban/route.ts
+@@ -1,6 +1,7 @@
+ import { NextResponse } from 'next/server';
+ import { guardRequest } from '@/lib/api-guard';
+-import { fetchDoubanRecommend } from '@/lib/douban';
++import { fetchDoubanBrowse, fetchDoubanRecommend } from '@/lib/douban';
++import { parseDoubanBrowseOptions } from '@/lib/douban-browse';
+ 
+ export const runtime = 'nodejs';
+ 
+@@ -10,6 +11,18 @@ export async function GET(req: Request) {
+   if (guarded) return guarded;
+ 
+   const url = new URL(req.url);
++  if (url.searchParams.has('category')) {
++    let options;
++    try { options = parseDoubanBrowseOptions(url.searchParams); }
++    catch (err) {
++      return NextResponse.json({ error: err instanceof Error ? err.message : '筛选参数无效' }, { status: 400 });
++    }
++    try { return NextResponse.json(await fetchDoubanBrowse(options)); }
++    catch (err) {
++      return NextResponse.json({ error: err instanceof Error ? err.message : '豆瓣推荐获取失败' }, { status: 502 });
++    }
++  }
++  // Keep the original type/tag API working for existing clients.
+   const type = url.searchParams.get('type') === 'tv' ? 'tv' : 'movie';
+   const tag = (url.searchParams.get('tag') || '热门').slice(0, 20);
+   const pageStart = Math.max(0, parseInt(url.searchParams.get('pageStart') || '0', 10) || 0);
+diff --git a/src/components/douban-section.test.ts b/src/components/douban-section.test.ts
+new file mode 100644
+index 0000000..8283f06
+--- /dev/null
++++ b/src/components/douban-section.test.ts
+@@ -0,0 +1,63 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++import * as React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
++
++const auth = vi.hoisted(() => ({ checked: true, verified: true, openLogin: () => {} }));
++vi.mock('./auth', () => ({ useAuth: () => auth }));
++vi.mock('@/lib/store', () => ({ useAppStore: (selector: (state: unknown) => unknown) => selector({ doubanEnabled: true, recommendSource: 'douban' }) }));
++vi.mock('@/lib/client-api', () => ({ api: { douban: vi.fn() } }));
++vi.mock('./video-card', async () => {
++  const react = await import('react');
++  return { DoubanCard: ({ item }: { item: { id: string; title: string } }) => react.createElement('button', { 'data-card-id': item.id }, item.title) };
++});
++import { RecommendSection } from './douban-section';
++
++let client: QueryClient;
++beforeEach(() => {
++  vi.stubGlobal('React', React);
++  auth.verified = true;
++  client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
++  for (const category of ['movie', 'tv', 'variety', 'anime']) {
++    client.setQueryData(['douban-browse', category, 'hot', '', '', ''], { pages: [{ items: Array.from({ length: 24 }, (_, index) => ({ id: `${category}-${index}`, title: `${category} ${index}`, cover: '' })), nextStart: 24 }], pageParams: [0] });
++  }
++});
++afterEach(() => { client.clear(); vi.unstubAllGlobals(); });
++const render = () => renderToStaticMarkup(React.createElement(QueryClientProvider, { client }, React.createElement(RecommendSection, { onPick: () => {} })));
++
++describe('Four-category recommendation layout', () => {
++  it('renders 24 cards and separate filters/load-more controls in every section', () => {
++    const html = render();
++    for (const [category, title] of [['movie', '电影'], ['tv', '电视剧'], ['variety', '综艺'], ['anime', '动漫']]) {
++      const section = html.match(new RegExp(`<section id="recommend-${category}"[\\s\\S]*?</section>`))?.[0] || '';
++      expect(section.match(/data-card-id=/g)).toHaveLength(24);
++      expect(section).toContain(`aria-label="${title}地区"`);
++      expect(section).toContain(`aria-label="${title}类型"`);
++      expect(section).toContain(`aria-label="${title}年份"`);
++      expect(section).toContain('全部年份');
++      expect(section).toContain(`<option value="${new Date().getUTCFullYear()}">`);
++      expect(section).toContain('<option value="1990-1999">1990–1999</option>');
++      expect(section).toContain(`aria-label="加载更多${title}"`);
++      expect(section).toContain('按豆瓣近期热度推荐');
++    }
++  });
++  it('an exhausted category does not hide the other categories load-more buttons', () => {
++    client.setQueryData(['douban-browse', 'movie', 'hot', '', '', ''], { pages: [{ items: [{ id: 'last', title: 'Last film', cover: '' }], nextStart: null }], pageParams: [0] });
++    const html = render();
++    expect(html).not.toContain('aria-label="加载更多电影"');
++    expect(html).toContain('aria-label="加载更多电视剧"');
++  });
++  it('keeps recommendation data behind the existing login gate', () => {
++    auth.verified = false;
++    const html = render();
++    expect(html).not.toContain('data-card-id=');
++    expect(html).toContain('登录后查看综艺推荐');
++  });
++  it('offers continuation when a bounded filter scan has no accepted cards yet', () => {
++    client.setQueryData(['douban-browse', 'variety', 'hot', '', '', ''], { pages: [{ items: [], nextStart: 200 }], pageParams: [0] });
++    const html = render();
++    expect(html).toContain('暂未找到符合条件的推荐，可以继续查找');
++    expect(html).toContain('继续查找');
++    expect(html).toContain('aria-label="加载更多综艺"');
++  });
++});
+diff --git a/src/components/douban-section.tsx b/src/components/douban-section.tsx
+index 3a0c475..0cae49b 100644
+--- a/src/components/douban-section.tsx
++++ b/src/components/douban-section.tsx
+@@ -1,18 +1,18 @@
+ 'use client';
+ 
+ import { useState } from 'react';
+-import { useQuery } from '@tanstack/react-query';
++import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+ import { api } from '@/lib/client-api';
+ import { useAppStore } from '@/lib/store';
+ import { cn } from '@/lib/utils';
+ import type { DoubanItem } from '@/lib/types';
+ import { DoubanCard } from './video-card';
++import { useAuth } from './auth';
++import { DOUBAN_CACHE_TTL_MS, DOUBAN_LATEST_MIN_RATINGS, DOUBAN_PAGE_SIZE, DOUBAN_REGIONS, DOUBAN_SECTIONS, DOUBAN_SORTS, DOUBAN_YEARS, nextDoubanPage, type DoubanCategory, type DoubanSort } from '@/lib/douban-browse';
+ 
+-const MOVIE_TAGS = ['热门', '最新', '经典', '豆瓣高分', '冷门佳片', '华语', '欧美', '韩国', '日本', '动画'];
+-const TV_TAGS = ['热门', '美剧', '英剧', '韩剧', '日剧', '国产剧', '港剧', '日本动画', '综艺', '纪录片'];
+ const WEEKDAYS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+ 
+-/** 首页推荐区：数据源由设置决定（豆瓣热门 / Bangumi 新番放送 / 影视热榜），二选一展示 */
++/** Douban is the default; alternative recommendation modes remain available in settings. */
+ export function RecommendSection({ onPick }: { onPick: (title: string) => void }) {
+   const doubanEnabled = useAppStore((s) => s.doubanEnabled);
+   const recommendSource = useAppStore((s) => s.recommendSource);
+@@ -23,72 +23,120 @@ export function RecommendSection({ onPick }: { onPick: (title: string) => void }
+   return <DoubanView onPick={onPick} />;
+ }
+ 
+-/**
+- * 豆瓣推荐：影视切换 + 标签筛选。
+- * 一次性渲染全部条目：数据本就一次拉全（50 条），卡片图片又是 lazy 加载，
+- * 视口外的图不会请求，因此不需要「加载更多」这类本地切片分页来打断浏览。
+- */
++/** Each category owns its filters, cached pages, errors and next-page requests. */
+ function DoubanView({ onPick }: { onPick: (title: string) => void }) {
+-  const [type, setType] = useState<'movie' | 'tv'>('movie');
+-  const [tag, setTag] = useState('热门');
++  return (
++    <div className="space-y-10" aria-label="豆瓣分类推荐">
++      <nav className="flex flex-wrap items-center gap-2" aria-label="推荐分区导航">
++        <span className="text-xs text-faint mr-1">豆瓣推荐</span>
++        {DOUBAN_SECTIONS.map((section) => (
++          <a key={section.id} href={`#recommend-${section.id}`} className="px-3 py-1.5 rounded-full text-sm bg-chip text-muted hover:bg-hover hover:text-content transition-colors">
++            {section.title}
++          </a>
++        ))}
++      </nav>
++      {DOUBAN_SECTIONS.map((section) => <DoubanCategorySection key={section.id} category={section.id} onPick={onPick} />)}
++    </div>
++  );
++}
+ 
+-  const query = useQuery({
+-    queryKey: ['douban', type, tag],
+-    queryFn: ({ signal }) => api.douban(type, tag, 0, 50, signal),
++function DoubanCategorySection({ category, onPick }: { category: DoubanCategory; onPick: (title: string) => void }) {
++  const section = DOUBAN_SECTIONS.find((entry) => entry.id === category)!;
++  const { checked, verified, openLogin } = useAuth();
++  const [sort, setSort] = useState<DoubanSort>('hot');
++  const [region, setRegion] = useState('');
++  const [genre, setGenre] = useState('');
++  const [year, setYear] = useState('');
++  const query = useInfiniteQuery({
++    queryKey: ['douban-browse', category, sort, region, genre, year],
++    initialPageParam: 0,
++    queryFn: ({ pageParam, signal }) => api.douban({ category, sort, region, genre, year, start: pageParam, limit: DOUBAN_PAGE_SIZE }, signal),
++    getNextPageParam: nextDoubanPage,
++    enabled: verified === true,
++    staleTime: DOUBAN_CACHE_TTL_MS[sort],
++    gcTime: DOUBAN_CACHE_TTL_MS[sort],
++    retry: false,
++  });
++  const seen = new Set<string>();
++  const items = (query.data?.pages.flatMap((page) => page.items) ?? []).filter((item) => {
++    if (seen.has(item.id)) return false;
++    seen.add(item.id);
++    return true;
+   });
+-
+-  const tags = type === 'movie' ? MOVIE_TAGS : TV_TAGS;
+-  const items = query.data?.items ?? [];
+-
+-  const switchType = (t: 'movie' | 'tv') => {
+-    if (t === type) return;
+-    setType(t);
+-    setTag('热门');
+-  };
+ 
+   return (
+-    <section aria-label="影视推荐">
+-      <div className="flex items-center justify-between mb-3">
+-        <div className="flex items-center gap-2">
+-          <div className="flex bg-chip rounded-lg p-0.5">
+-            <TypeButton active={type === 'movie'} onClick={() => switchType('movie')}>
+-              电影
+-            </TypeButton>
+-            <TypeButton active={type === 'tv'} onClick={() => switchType('tv')}>
+-              剧集
+-            </TypeButton>
+-          </div>
++    <section id={`recommend-${category}`} aria-labelledby={`recommend-${category}-title`} className="scroll-mt-20" data-recommend-category={category}>
++      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
++        <h2 id={`recommend-${category}-title`} className="text-xl font-semibold text-content">{section.title}</h2>
++        <div className="flex items-center gap-1 rounded-lg bg-chip p-0.5" role="group" aria-label={`${section.title}排序`}>
++          {DOUBAN_SORTS.map((option) => (
++            <button key={option.id} type="button" onClick={() => setSort(option.id)} aria-pressed={sort === option.id}
++              className={cn('px-3 py-1.5 rounded-md text-sm transition-colors', sort === option.id ? 'bg-accent text-on-accent' : 'text-muted hover:text-content')}>
++              {option.title}
++            </button>
++          ))}
+         </div>
+       </div>
+-
+-      <div className="flex flex-wrap gap-1.5 mb-4">
+-        {tags.map((t) => (
+-          <button
+-            key={t}
+-            className={cn(
+-              'px-2.5 py-1 rounded-full text-xs transition-colors',
+-              t === tag ? 'bg-accent text-on-accent' : 'bg-chip text-muted hover:text-content hover:bg-hover'
+-            )}
+-            onClick={() => setTag(t)}
+-          >
+-            {t}
+-          </button>
+-        ))}
++      <p className="text-xs text-faint mb-3">
++        {sort === 'hot' ? '按豆瓣近期热度推荐' : sort === 'latest' ? `按首映／首播时间排列 · 至少 ${DOUBAN_LATEST_MIN_RATINGS} 人评价` : '按豆瓣评分排列'}
++      </p>
++      <div className="flex flex-wrap gap-3 mb-4">
++        <label className="flex items-center gap-2 text-xs text-muted">
++          地区
++          <select aria-label={`${section.title}地区`} className="input py-1.5 text-sm min-w-0" value={region} onChange={(event) => setRegion(event.target.value)}>
++            <option value="">全部地区</option>
++            {DOUBAN_REGIONS.map((country) => <option key={country} value={country}>{country}</option>)}
++          </select>
++        </label>
++        <label className="flex items-center gap-2 text-xs text-muted">
++          类型
++          <select aria-label={`${section.title}类型`} className="input py-1.5 text-sm min-w-0" value={genre} onChange={(event) => setGenre(event.target.value)}>
++            <option value="">全部类型</option>
++            {section.genres.map((value) => <option key={value} value={value}>{value}</option>)}
++          </select>
++        </label>
++        <label className="flex items-center gap-2 text-xs text-muted">
++          年份
++          <select aria-label={`${section.title}年份`} className="input py-1.5 text-sm min-w-0" value={year} onChange={(event) => setYear(event.target.value)}>
++            <option value="">全部年份</option>
++            {DOUBAN_YEARS.map((option) => <option key={option.value} value={option.value}>{option.title}</option>)}
++          </select>
++        </label>
++        {(region || genre || year || sort !== 'hot') && (
++          <button type="button" className="text-xs text-accent hover:underline" onClick={() => { setSort('hot'); setRegion(''); setGenre(''); setYear(''); }}>重置筛选</button>
++        )}
+       </div>
+ 
+-      {query.isError ? (
+-        <p className="text-center text-sm text-faint py-8">推荐内容加载失败，可稍后重试或在设置中关闭</p>
+-      ) : query.isLoading ? (
+-        <GridSkeleton />
+-      ) : items.length === 0 ? (
+-        <p className="text-center text-sm text-faint py-8">该分类暂无推荐内容</p>
+-      ) : (
+-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5">
+-          {items.map((item) => (
+-            <DoubanCard key={item.id} item={item} onClick={() => onPick(item.title)} />
+-          ))}
+-        </div>
+-      )}
++      {checked && !verified ? (
++        <div className="text-center py-8"><button type="button" onClick={openLogin} className="btn-ghost text-sm">登录后查看{section.title}推荐</button></div>
++      ) : query.isPending ? <GridSkeleton count={DOUBAN_PAGE_SIZE} />
++        : query.isError && items.length === 0 ? (
++          <div role="alert" className="text-center py-8 space-y-3">
++            <p className="text-sm text-faint">{query.error instanceof Error ? query.error.message : `豆瓣${section.title}推荐暂时无法加载`}</p>
++            <button type="button" className="btn-ghost text-sm" onClick={() => void query.refetch()}>重试</button>
++          </div>
++        ) : items.length === 0 ? (
++          <div className="text-center text-sm text-faint py-8 space-y-3">
++            <p>{query.hasNextPage ? '暂未找到符合条件的推荐，可以继续查找' : '当前筛选暂无推荐，试试其他条件'}</p>
++            {query.hasNextPage && <button type="button" className="btn-ghost text-sm" disabled={query.isFetchingNextPage} onClick={() => void query.fetchNextPage()} aria-label={`加载更多${section.title}`}>
++              {query.isFetchingNextPage ? '查找中…' : query.isFetchNextPageError ? '查找失败，点击重试' : '继续查找'}
++            </button>}
++          </div>
++        ) : (
++          <>
++            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5" aria-busy={query.isFetchingNextPage}>
++              {items.map((item) => <DoubanCard key={item.id} item={item} onClick={() => onPick(item.title)} />)}
++            </div>
++            <div className="flex flex-col items-center gap-2 mt-5">
++              <p className="text-xs text-faint" aria-live="polite">已显示 {items.length} 部{!query.hasNextPage ? ' · 已加载全部结果' : ''}</p>
++              {query.hasNextPage && (
++                <button type="button" className="btn-ghost text-sm min-w-36" disabled={query.isFetchingNextPage} onClick={() => void query.fetchNextPage()} aria-label={`加载更多${section.title}`}>
++                  {query.isFetchingNextPage ? '加载中…' : query.isFetchNextPageError ? '加载失败，点击重试' : '加载更多'}
++                </button>
++              )}
++            </div>
++          </>
++        )}
+     </section>
+   );
+ }
+@@ -182,10 +230,10 @@ function HotListView({ onPick }: { onPick: (title: string) => void }) {
+   );
+ }
+ 
+-function GridSkeleton() {
++function GridSkeleton({ count = 16 }: { count?: number }) {
+   return (
+     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5">
+-      {Array.from({ length: 16 }).map((_, i) => (
++      {Array.from({ length: count }).map((_, i) => (
+         <div key={i}>
+           <div className="aspect-[2/3] rounded-lg bg-chip animate-pulse" />
+           <div className="h-3 mt-2 rounded bg-chip animate-pulse" />
+@@ -208,15 +256,3 @@ function ChipButton({ active, onClick, children }: { active: boolean; onClick: (
+     </button>
+   );
+ }
+-
+-function TypeButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+-  return (
+-    <button
+-      className={cn('px-3.5 py-1.5 rounded-md text-sm transition-colors', active ? 'bg-accent text-on-accent' : 'text-muted hover:text-content')}
+-      onClick={onClick}
+-      aria-pressed={active}
+-    >
+-      {children}
+-    </button>
+-  );
+-}
+diff --git a/src/components/source-manager.tsx b/src/components/source-manager.tsx
+index f9aeabd..ee5b6da 100644
+--- a/src/components/source-manager.tsx
++++ b/src/components/source-manager.tsx
+@@ -714,7 +714,7 @@ function HomePanel() {
+           value={store.recommendSource}
+           onChange={(v) => store.updateSettings({ recommendSource: v as 'douban' | 'bangumi' | 'hot-list' })}
+           options={[
+-            { value: 'douban', label: '豆瓣', hint: '热门电影与剧集' },
++            { value: 'douban', label: '豆瓣', hint: '电影 / 电视剧 / 综艺 / 动漫，分类筛选与分页' },
+             { value: 'bangumi', label: 'Bangumi', hint: '每日新番放送（免 key）' },
+             { value: 'hot-list', label: '影视榜单', hint: '豆瓣周榜 / 百度热播' },
+           ]}
+diff --git a/src/lib/client-api.ts b/src/lib/client-api.ts
+index 8237197..98b5013 100644
+--- a/src/lib/client-api.ts
++++ b/src/lib/client-api.ts
+@@ -1,5 +1,6 @@
+ 'use client';
+ 
++import type { DoubanBrowseOptions, DoubanBrowseResponse } from './douban-browse';
+ import type { SearchResponse, SearchStreamEvent, SourceSearchOutcome, VideoDetail, DoubanResponse, BangumiCalendarResponse, AuthStatusResponse, SourceConfig, SearchResultItem, LivePlaylistResponse, LiveEpgResponse, SourceListPayload, QualityProbeItem, QualityProbeResult } from './types';
+ 
+ /**
+@@ -196,9 +197,12 @@ export const api = {
+     }
+   },
+ 
+-  douban: (type: 'movie' | 'tv', tag: string, pageStart: number, pageSize: number, signal?: AbortSignal) => {
+-    const sp = new URLSearchParams({ type, tag, pageStart: String(pageStart), pageSize: String(pageSize) });
+-    return request<DoubanResponse>(`/api/douban?${sp.toString()}`, { signal });
++  douban: (options: DoubanBrowseOptions, signal?: AbortSignal) => {
++    const sp = new URLSearchParams({
++      category: options.category, sort: options.sort, region: options.region, genre: options.genre, year: options.year,
++      start: String(options.start), limit: String(options.limit),
++    });
++    return request<DoubanBrowseResponse>(`/api/douban?${sp}`, { signal });
+   },
+ 
+   /** Bangumi 每日放送（免 key），首页推荐的另一数据源 */
+diff --git a/src/lib/douban-browse.test.ts b/src/lib/douban-browse.test.ts
+new file mode 100644
+index 0000000..394bb96
+--- /dev/null
++++ b/src/lib/douban-browse.test.ts
+@@ -0,0 +1,47 @@
++import { describe, expect, it } from 'vitest';
++import { DOUBAN_YEARS, doubanBrowseUrl, nextDoubanPage, parseDoubanBrowseOptions } from './douban-browse';
++
++describe('Douban browse filters', () => {
++  it('combines category, region, genre, year, sort and actual page offset', () => {
++    const options = parseDoubanBrowseOptions(new URLSearchParams('category=variety&sort=latest&region=中国大陆&genre=真人秀&year=2015&start=24&limit=24'));
++    const target = new URL(doubanBrowseUrl(options));
++    expect(target.pathname).toBe('/j/new_search_subjects');
++    expect(Object.fromEntries(target.searchParams)).toEqual({ tags: '综艺', sort: 'R', range: '1,10', start: '24', limit: '25', countries: '中国大陆', genres: '真人秀', year_range: '2015,2015' });
++  });
++
++  it('uses recent heat for popular titles while keeping high-score ordering unrestricted', () => {
++    const hot = parseDoubanBrowseOptions(new URLSearchParams('category=movie'));
++    expect(new URL(doubanBrowseUrl(hot)).searchParams.get('sort')).toBe('U');
++    const rating = new URL(doubanBrowseUrl({ ...hot, sort: 'rating' }));
++    expect(rating.searchParams.get('sort')).toBe('S');
++    expect(rating.searchParams.get('range')).toBe('0,10');
++  });
++
++  it('maps every year preset to an inclusive upstream range and leaves all-years unrestricted', () => {
++    expect(DOUBAN_YEARS[0].value).toBe(String(new Date().getUTCFullYear()));
++    for (const { value } of DOUBAN_YEARS) {
++      const options = parseDoubanBrowseOptions(new URLSearchParams({ category: 'movie', year: value }));
++      const [from, to = from] = value.split('-');
++      expect(new URL(doubanBrowseUrl(options)).searchParams.get('year_range')).toBe(`${from},${to}`);
++    }
++    const defaults = parseDoubanBrowseOptions(new URLSearchParams('category=movie'));
++    expect(defaults.year).toBe('');
++    expect(new URL(doubanBrowseUrl(defaults)).searchParams.has('year_range')).toBe(false);
++  });
++
++  it('rejects filters that would silently request another category or an invalid page', () => {
++    for (const query of ['category=unknown', 'category=movie&sort=U', 'category=variety&genre=科幻', 'category=tv&region=内网', 'category=anime&start=-24', 'category=anime&start=abc', 'category=movie&limit=100', 'category=movie&year=latest', 'category=movie&year=2024,2025', 'category=tv&year=1999-1990', `category=anime&year=${new Date().getUTCFullYear() + 1}`]) {
++      expect(() => parseDoubanBrowseOptions(new URLSearchParams(query))).toThrow();
++    }
++  });
++
++  it('stops repeated or exhausted upstream pages while preserving real next offsets', () => {
++    const first = { items: [{ id: '1', title: 'One', cover: '' }], nextStart: 24 };
++    const second = { items: [{ id: '2', title: 'Two', cover: '' }], nextStart: 48 };
++    expect(nextDoubanPage(first, [first])).toBe(24);
++    expect(nextDoubanPage(second, [first, second])).toBe(48);
++    expect(nextDoubanPage({ ...first, nextStart: 48 }, [first, first])).toBeUndefined();
++    expect(nextDoubanPage({ ...second, nextStart: null }, [first, second])).toBeUndefined();
++    expect(nextDoubanPage({ items: [], nextStart: 200 }, [first, { items: [], nextStart: 200 }])).toBe(200);
++  });
++});
+diff --git a/src/lib/douban-browse.ts b/src/lib/douban-browse.ts
+new file mode 100644
+index 0000000..839b0c8
+--- /dev/null
++++ b/src/lib/douban-browse.ts
+@@ -0,0 +1,101 @@
++import type { DoubanItem } from './types';
++
++export const DOUBAN_PAGE_SIZE = 24;
++export const DOUBAN_LATEST_MIN_RATINGS = 500;
++export type DoubanCategory = 'movie' | 'tv' | 'variety' | 'anime';
++export type DoubanSort = 'hot' | 'latest' | 'rating';
++
++/** Keep client freshness, query retention and upstream caches on the same policy. */
++export const DOUBAN_CACHE_TTL_MS: Readonly<Record<DoubanSort, number>> = {
++  hot: 6 * 60 * 60_000,
++  latest: 6 * 60 * 60_000,
++  rating: 24 * 60 * 60_000,
++};
++
++export const DOUBAN_SECTIONS: ReadonlyArray<{
++  id: DoubanCategory;
++  title: string;
++  tag: string;
++  genres: readonly string[];
++}> = [
++  { id: 'movie', title: '电影', tag: '电影', genres: ['剧情', '喜剧', '动作', '爱情', '科幻', '悬疑', '恐怖', '动画', '纪录片', '战争'] },
++  { id: 'tv', title: '电视剧', tag: '电视剧', genres: ['剧情', '喜剧', '爱情', '悬疑', '犯罪', '科幻', '古装', '武侠'] },
++  { id: 'variety', title: '综艺', tag: '综艺', genres: ['真人秀', '脱口秀', '音乐', '歌舞'] },
++  { id: 'anime', title: '动漫', tag: '动画', genres: ['喜剧', '奇幻', '冒险', '科幻', '动作', '家庭'] },
++];
++
++export const DOUBAN_REGIONS = ['中国大陆', '中国香港', '中国台湾', '美国', '日本', '韩国', '英国', '法国'] as const;
++export const DOUBAN_SORTS: ReadonlyArray<{ id: DoubanSort; title: string }> = [
++  { id: 'hot', title: '热门' }, { id: 'latest', title: '最新' }, { id: 'rating', title: '高分' },
++];
++
++// Recent titles can be selected by year; older titles use decade ranges.
++const currentYear = new Date().getUTCFullYear();
++export const DOUBAN_YEARS: ReadonlyArray<{ value: string; title: string }> = [
++  ...Array.from({ length: currentYear - 1999 }, (_, index) => {
++    const year = String(currentYear - index);
++    return { value: year, title: year };
++  }),
++  { value: '1990-1999', title: '1990–1999' },
++  { value: '1980-1989', title: '1980–1989' },
++  { value: '1970-1979', title: '1970–1979' },
++  { value: '1900-1969', title: '更早（1900–1969）' },
++];
++
++export interface DoubanBrowseOptions {
++  category: DoubanCategory;
++  sort: DoubanSort;
++  region: string;
++  genre: string;
++  year: string;
++  start: number;
++  limit: number;
++}
++
++export interface DoubanBrowseResponse {
++  items: DoubanItem[];
++  nextStart: number | null;
++}
++
++export function nextDoubanPage(lastPage: DoubanBrowseResponse, pages: DoubanBrowseResponse[]): number | undefined {
++  const previousIds = new Set(pages.slice(0, -1).flatMap((page) => page.items.map((item) => item.id)));
++  if (lastPage.items.length && !lastPage.items.some((item) => !previousIds.has(item.id))) return undefined;
++  return lastPage.nextStart ?? undefined;
++}
++
++/** Shared validation keeps UI filters and upstream query parameters in sync. */
++export function parseDoubanBrowseOptions(params: URLSearchParams): DoubanBrowseOptions {
++  const section = DOUBAN_SECTIONS.find((entry) => entry.id === params.get('category'));
++  if (!section) throw new Error('无效的推荐分类');
++  const sort = params.get('sort') || 'hot';
++  if (!DOUBAN_SORTS.some((entry) => entry.id === sort)) throw new Error('无效的排序方式');
++  const region = params.get('region') || '';
++  if (region && !DOUBAN_REGIONS.some((entry) => entry === region)) throw new Error('无效的地区');
++  const genre = params.get('genre') || '';
++  if (genre && !section.genres.includes(genre)) throw new Error('该分类不支持此类型');
++  const year = params.get('year') || '';
++  if (year && !DOUBAN_YEARS.some((entry) => entry.value === year)) throw new Error('无效的年份');
++  const start = Number(params.get('start') || 0);
++  const limit = Number(params.get('limit') || DOUBAN_PAGE_SIZE);
++  if (!Number.isSafeInteger(start) || start < 0) throw new Error('无效的分页起点');
++  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 50) throw new Error('每页数量必须为 1–50');
++  return { category: section.id, sort: sort as DoubanSort, region, genre, year, start, limit };
++}
++
++export function doubanBrowseUrl(options: DoubanBrowseOptions): string {
++  const section = DOUBAN_SECTIONS.find((entry) => entry.id === options.category)!;
++  const sorts: Record<DoubanSort, string> = { hot: 'U', latest: 'R', rating: 'S' };
++  const params = new URLSearchParams({
++    tags: section.tag, sort: sorts[options.sort], range: options.sort === 'latest' ? '1,10' : '0,10',
++    start: String(options.start),
++    // One extra item determines whether another real upstream page exists.
++    limit: String(options.limit + 1),
++  });
++  if (options.region) params.set('countries', options.region);
++  if (options.genre) params.set('genres', options.genre);
++  if (options.year) {
++    const [from, to = from] = options.year.split('-');
++    params.set('year_range', `${from},${to}`);
++  }
++  return `https://movie.douban.com/j/new_search_subjects?${params}`;
++}
+diff --git a/src/lib/douban.test.ts b/src/lib/douban.test.ts
+new file mode 100644
+index 0000000..d434335
+--- /dev/null
++++ b/src/lib/douban.test.ts
+@@ -0,0 +1,207 @@
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++
++vi.mock('./fetch-utils', () => ({ fetchUpstream: vi.fn(), getCache: vi.fn(), setCache: vi.fn() }));
++import { fetchUpstream, getCache, setCache } from './fetch-utils';
++import { fetchDoubanBrowse } from './douban';
++import type { DoubanBrowseOptions } from './douban-browse';
++
++const options: DoubanBrowseOptions = { category: 'movie', sort: 'hot', region: '', genre: '', year: '', start: 0, limit: 24 };
++const subject = (id: number) => ({ id: String(id), title: `Title ${id}`, cover: 'https://img1.doubanio.com/example.jpg', rate: '8.1' });
++beforeEach(() => {
++  vi.resetAllMocks();
++  vi.mocked(getCache).mockReturnValue(undefined);
++});
++
++describe('Douban upstream pagination', () => {
++  it('returns 24 cards and a real next offset using one lookahead item', async () => {
++    vi.mocked(fetchUpstream).mockResolvedValue(new Response(JSON.stringify({ data: Array.from({ length: 25 }, (_, i) => subject(i + 1)) })));
++    const result = await fetchDoubanBrowse(options);
++    expect(result.items).toHaveLength(24);
++    expect(result.items[23].id).toBe('24');
++    expect(result.nextStart).toBe(24);
++    expect(String(vi.mocked(fetchUpstream).mock.calls[0][0])).toContain('limit=25');
++  });
++
++  it('finishes pagination when the upstream has no lookahead, including an empty last page', async () => {
++    for (const count of [0, 7, 24]) {
++      vi.mocked(fetchUpstream).mockResolvedValue(new Response(JSON.stringify({ data: Array.from({ length: count }, (_, i) => subject(i + 25)) })));
++      const result = await fetchDoubanBrowse({ ...options, start: 24 });
++      expect(result.items).toHaveLength(count);
++      expect(result.nextStart).toBeNull();
++    }
++  });
++
++  it('does not collapse pagination offsets after duplicate or malformed upstream cards', async () => {
++    vi.mocked(fetchUpstream).mockResolvedValue(new Response(JSON.stringify({ data: [subject(1), subject(1), { id: 'bad' }, ...Array.from({ length: 22 }, (_, i) => subject(i + 2))] })));
++    const result = await fetchDoubanBrowse(options);
++    expect(new Set(result.items.map((item) => item.id)).size).toBe(result.items.length);
++    expect(result.items.some((item) => !item.title)).toBe(false);
++    expect(result.nextStart).toBe(24);
++  });
++
++  it('separates filter combinations in the cache', async () => {
++    vi.mocked(fetchUpstream).mockImplementation(async () => new Response(JSON.stringify({ data: [subject(1)] })));
++    await fetchDoubanBrowse(options);
++    await fetchDoubanBrowse({ ...options, category: 'tv', genre: '悬疑', region: '中国大陆' });
++    await fetchDoubanBrowse({ ...options, year: '2024' });
++    await fetchDoubanBrowse({ ...options, year: '2025' });
++    const keys = vi.mocked(setCache).mock.calls.map((call) => call[0]).filter((key) => key.startsWith('douban-browse:'));
++    expect(new Set(keys).size).toBe(4);
++  });
++
++  it('reports an invalid upstream response instead of presenting a successful empty category', async () => {
++    vi.mocked(fetchUpstream).mockImplementation(async () => new Response(JSON.stringify({ error: 'rate limited' })));
++    await expect(fetchDoubanBrowse(options)).rejects.toThrow('豆瓣推荐');
++  });
++});
++
++describe('Extended recommendation cache lifetimes', () => {
++  it.each([['hot', 6], ['latest', 6], ['rating', 24]] as const)(
++    'reuses %s results for %i hours and only fetches upstream again after expiry', async (sort, hours) => {
++      const realCache = await vi.importActual<typeof import('./fetch-utils')>('./fetch-utils');
++      vi.mocked(getCache).mockImplementation(realCache.getCache);
++      vi.mocked(setCache).mockImplementation(realCache.setCache);
++      vi.useFakeTimers();
++      vi.setSystemTime(new Date('2026-10-21T00:00:00Z'));
++      try {
++        vi.mocked(fetchUpstream).mockImplementation(async (address) => new Response(JSON.stringify(
++          String(address).includes('m.douban.com')
++            ? { items: [{ id: '1', rating: { count: 1000 } }], total: 1 }
++            : { data: [subject(1)] }
++        )));
++        const first = await fetchDoubanBrowse({ ...options, sort });
++        const initialCalls = vi.mocked(fetchUpstream).mock.calls.length;
++        expect(initialCalls).toBe(sort === 'latest' ? 2 : 1);
++
++        vi.advanceTimersByTime(30 * 60_000);
++        expect(await fetchDoubanBrowse({ ...options, sort })).toBe(first);
++        expect(fetchUpstream).toHaveBeenCalledTimes(initialCalls);
++
++        vi.advanceTimersByTime(hours * 60 * 60_000 - 30 * 60_000 - 1);
++        expect(await fetchDoubanBrowse({ ...options, sort })).toBe(first);
++        expect(fetchUpstream).toHaveBeenCalledTimes(initialCalls);
++
++        vi.advanceTimersByTime(2);
++        expect(await fetchDoubanBrowse({ ...options, sort })).not.toBe(first);
++        // Both the final page and its underlying list / metadata caches must expire.
++        expect(fetchUpstream).toHaveBeenCalledTimes(initialCalls * 2);
++      } finally { vi.useRealTimers(); }
++    }
++  );
++});
++
++describe('Recent heat and moderately filtered latest releases', () => {
++  const metadata = (id: number, count = 500, genre = '剧情') => ({ id: String(id), rating: { count, value: 6 }, card_subtitle: `2026 / 中国大陆 / ${genre} / Director / Cast` });
++  const mockFeeds = (ordered: ReturnType<typeof subject>[], details: ReturnType<typeof metadata>[]) => {
++    vi.mocked(fetchUpstream).mockImplementation(async (address) => {
++      const url = new URL(String(address));
++      if (url.hostname === 'm.douban.com') return new Response(JSON.stringify({ items: details, total: details.length }));
++      const start = Number(url.searchParams.get('start'));
++      const count = Number(url.searchParams.get('limit'));
++      return new Response(JSON.stringify({ data: ordered.slice(start, start + count) }));
++    });
++  };
++
++  it('filters by actual vote count, preserves release order, and resumes at the first accepted lookahead', async () => {
++    const ordered = Array.from({ length: 90 }, (_, i) => subject(i + 1));
++    mockFeeds(ordered, ordered.map((_, i) => metadata(i + 1, i % 3 === 0 ? 499 : 500)));
++    const first = await fetchDoubanBrowse({ ...options, sort: 'latest' });
++    expect(first.items).toHaveLength(24);
++    expect(first.items.map((item) => item.id)).toEqual(ordered.filter((_, i) => i % 3 !== 0).slice(0, 24).map((item) => item.id));
++    expect(first.nextStart).toBe(37);
++    expect(first.items.every((item) => item.ratingCount! >= 500)).toBe(true);
++    const second = await fetchDoubanBrowse({ ...options, sort: 'latest', start: first.nextStart! });
++    expect(second.items).toHaveLength(24);
++    expect(second.items[0].id).toBe('38');
++    expect(second.items.some((item) => first.items.some((other) => other.id === item.id))).toBe(false);
++  });
++
++  it('keeps a low-scoring but sufficiently reviewed new release and excludes missing or invalid counts', async () => {
++    mockFeeds([subject(1), { ...subject(2), rate: '2.1' }, subject(3), subject(4), subject(5)], [metadata(1, 499), metadata(2, 500), metadata(3, NaN), metadata(4, -1)]);
++    const result = await fetchDoubanBrowse({ ...options, sort: 'latest' });
++    expect(result.items.map((item) => item.id)).toEqual(['2']);
++    expect(result.items[0].rating).toBe('2.1');
++    expect(result.nextStart).toBeNull();
++  });
++
++  it('fills a page across rejected batches instead of treating the first empty filtered batch as exhaustion', async () => {
++    const ordered = Array.from({ length: 80 }, (_, i) => subject(i + 1));
++    mockFeeds(ordered, ordered.map((_, i) => metadata(i + 1, i < 50 ? 10 : 800)));
++    const result = await fetchDoubanBrowse({ ...options, sort: 'latest' });
++    expect(result.items).toHaveLength(24);
++    expect(result.items[0].id).toBe('51');
++    expect(result.nextStart).toBe(74);
++  });
++
++  it('bounds empty scans and retains a continuation when more upstream candidates remain', async () => {
++    const ordered = Array.from({ length: 250 }, (_, i) => subject(i + 1));
++    mockFeeds(ordered, ordered.map((_, i) => metadata(i + 1, 1)));
++    const result = await fetchDoubanBrowse({ ...options, sort: 'latest' });
++    expect(result).toEqual({ items: [], nextStart: 200 });
++    const second = await fetchDoubanBrowse({ ...options, sort: 'latest', start: 200 });
++    expect(second.nextStart).toBeNull();
++  });
++
++  it('drops wrongly tagged sitcoms from popular variety while retaining recent-heat order and unrated new shows', async () => {
++    mockFeeds([subject(1), { ...subject(2), rate: '' }, subject(3)], [metadata(1, 90000, '喜剧'), metadata(2, 0, '真人秀'), metadata(3, 700, '脱口秀')]);
++    const result = await fetchDoubanBrowse({ ...options, category: 'variety' });
++    expect(result.items.map((item) => item.id)).toEqual(['2', '3']);
++    expect(vi.mocked(fetchUpstream).mock.calls.every(([url]) => new URL(String(url)).searchParams.get('sort') === 'U')).toBe(true);
++  });
++
++  it('enriches animation movies and series without changing their combined release order', async () => {
++    const calls: URL[] = [];
++    vi.mocked(fetchUpstream).mockImplementation(async (address) => {
++      const url = new URL(String(address)); calls.push(url);
++      if (url.hostname !== 'm.douban.com') return new Response(JSON.stringify({ data: [subject(3), subject(1), subject(2)] }));
++      return new Response(JSON.stringify({ items: url.pathname.includes('/movie/') ? [metadata(1), metadata(2)] : [metadata(3)], total: 2 }));
++    });
++    const result = await fetchDoubanBrowse({ ...options, category: 'anime', sort: 'latest', year: '2024', region: '日本', genre: '奇幻' });
++    expect(result.items.map((item) => item.id)).toEqual(['3', '1', '2']);
++    const richCalls = calls.filter((url) => url.hostname === 'm.douban.com');
++    expect(richCalls).toHaveLength(2);
++    expect(richCalls.every((url) => url.searchParams.get('tags') === '动画,奇幻,日本,2024')).toBe(true);
++  });
++
++  it('uses supported decade tags to obtain counts for the entire older year range', async () => {
++    mockFeeds([subject(1)], [metadata(1)]);
++    await fetchDoubanBrowse({ ...options, sort: 'latest', year: '1900-1969' });
++    const tags = vi.mocked(fetchUpstream).mock.calls.map(([url]) => new URL(String(url))).filter((url) => url.hostname === 'm.douban.com').map((url) => url.searchParams.get('tags'));
++    expect(tags).toEqual(['电影,60年代', '电影,更早']);
++  });
++
++  it('leaves high-score results and the rating API parameters unchanged', async () => {
++    mockFeeds([{ ...subject(1), rate: '9.9' }, { ...subject(2), rate: '8.1' }], []);
++    const result = await fetchDoubanBrowse({ ...options, sort: 'rating' });
++    expect(result.items.map((item) => item.id)).toEqual(['1', '2']);
++    expect(fetchUpstream).toHaveBeenCalledTimes(1);
++    const url = new URL(String(vi.mocked(fetchUpstream).mock.calls[0][0]));
++    expect(url.searchParams.get('sort')).toBe('S');
++    expect(url.searchParams.get('range')).toBe('0,10');
++  });
++
++  it('reports metadata outages instead of silently accepting unverified latest titles', async () => {
++    vi.mocked(fetchUpstream).mockImplementation(async (address) => new Response(JSON.stringify(String(address).includes('m.douban.com') ? { error: 'unavailable' } : { data: [subject(1)] })));
++    await expect(fetchDoubanBrowse({ ...options, sort: 'latest' })).rejects.toThrow('豆瓣推荐');
++  });
++
++  it('sets a cooldown on explicit rate limits instead of trying another access path', async () => {
++    for (const response of [new Response(JSON.stringify({ msg: '检测到有异常请求，请登录再试!', r: 1 })), new Response('', { status: 429 })]) {
++      vi.clearAllMocks();
++      vi.mocked(fetchUpstream).mockResolvedValue(response);
++      await expect(fetchDoubanBrowse(options)).rejects.toThrow('豆瓣暂时限制访问');
++      expect(setCache).toHaveBeenCalledWith('douban-access-limited', true, 300000);
++      expect(fetchUpstream).toHaveBeenCalledTimes(1);
++    }
++  });
++
++  it('serves cached pages during a cooldown and makes no fresh upstream request', async () => {
++    const cached = { items: [{ id: '1', title: 'Cached', cover: '' }], nextStart: null };
++    vi.mocked(getCache).mockImplementation((key) => key.startsWith('douban-browse:') ? cached : true);
++    expect(await fetchDoubanBrowse(options)).toBe(cached);
++    expect(fetchUpstream).not.toHaveBeenCalled();
++    vi.mocked(getCache).mockImplementation((key) => key === 'douban-access-limited' ? true : undefined);
++    await expect(fetchDoubanBrowse(options)).rejects.toThrow('豆瓣暂时限制访问');
++    expect(fetchUpstream).not.toHaveBeenCalled();
++  });
++});
+diff --git a/src/lib/douban.ts b/src/lib/douban.ts
+index 366cb37..1e7b77a 100644
+--- a/src/lib/douban.ts
++++ b/src/lib/douban.ts
+@@ -1,5 +1,6 @@
+ import type { DoubanItem } from './types';
+ import { fetchUpstream, getCache, setCache } from './fetch-utils';
++import { DOUBAN_CACHE_TTL_MS, DOUBAN_LATEST_MIN_RATINGS, DOUBAN_SECTIONS, doubanBrowseUrl, type DoubanBrowseOptions, type DoubanBrowseResponse } from './douban-browse';
+ 
+ /**
+  * 豆瓣推荐数据获取（服务端直连，带内存缓存与降级链）。
+@@ -8,7 +9,10 @@ import { fetchUpstream, getCache, setCache } from './fetch-utils';
+  */
+ 
+ const DOUBAN_API = 'https://movie.douban.com/j/search_subjects';
+-const CACHE_TTL = 10 * 60 * 1000;
++const ACCESS_COOLDOWN_KEY = 'douban-access-limited';
++class DoubanAccessLimitedError extends Error {
++  constructor() { super('豆瓣暂时限制访问，请稍后再试'); }
++}
+ const UA =
+   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+ 
+@@ -83,6 +87,140 @@ export async function fetchDoubanRecommend(
+     isTv: type === 'tv',
+   }));
+ 
+-  setCache(cacheKey, items, CACHE_TTL);
++  setCache(cacheKey, items, DOUBAN_CACHE_TTL_MS.hot);
+   return items;
+ }
++
++/** Only fixed Douban endpoints and deployment-configured fallback proxies are used. */
++async function fetchBrowseJson<T>(target: string, field: 'data' | 'items', ttlMs: number): Promise<T> {
++  const cacheKey = `douban-json:${target}`;
++  const cached = getCache<T>(cacheKey);
++  if (cached) return cached;
++  if (getCache<boolean>(ACCESS_COOLDOWN_KEY)) throw new DoubanAccessLimitedError();
++  const attempts = [target, ...fallbackProxies().map((proxy) => proxy + encodeURIComponent(target))];
++  for (const address of attempts) {
++    try {
++      const response = await fetchUpstream(address, {
++        timeoutMs: 8000, retries: 0,
++        headers: { 'User-Agent': UA, Referer: 'https://movie.douban.com/', Accept: 'application/json' },
++      });
++      if (response.status === 429) {
++        setCache(ACCESS_COOLDOWN_KEY, true, 5 * 60_000);
++        throw new DoubanAccessLimitedError();
++      }
++      if (!response.ok) continue;
++      const data = await response.json();
++      if (data?.r === 1 && typeof data.msg === 'string' && /异常请求|登录再试|访问频繁/.test(data.msg)) {
++        setCache(ACCESS_COOLDOWN_KEY, true, 5 * 60_000);
++        throw new DoubanAccessLimitedError();
++      }
++      if (data && Array.isArray(data[field])) {
++        setCache(cacheKey, data, ttlMs);
++        return data as T;
++      }
++    } catch (error) {
++      if (error instanceof DoubanAccessLimitedError) throw error;
++      // Try only deployment-configured fallbacks for ordinary network failures.
++    }
++  }
++  throw new Error('豆瓣推荐暂时无法读取，请稍后重试');
++}
++
++interface DoubanMetadata {
++  id: string;
++  card_subtitle?: string;
++  rating?: { count?: number; value?: number };
++}
++
++/** The rich API supplies actual vote counts; the browse API remains the ordering authority. */
++async function browseMetadata(options: DoubanBrowseOptions, end: number): Promise<Map<string, DoubanMetadata>> {
++  const section = DOUBAN_SECTIONS.find((entry) => entry.id === options.category)!;
++  const types = options.category === 'anime' ? ['movie', 'tv'] : [options.category === 'movie' ? 'movie' : 'tv'];
++  const years = options.year === '1900-1969' ? ['60年代', '更早']
++    : [options.year.includes('-') ? `${options.year.slice(2, 4)}年代` : options.year];
++  const streams = await Promise.all(types.flatMap((type) => years.map(async (year) => {
++    const items: DoubanMetadata[] = [];
++    // Cached prefixes cover every possible movie/TV position in a combined animation page.
++    for (let start = 0; start < Math.min(end, 1000); start += 100) {
++      const params = new URLSearchParams({
++        start: String(start), count: '100', sort: options.sort === 'hot' ? 'U' : 'R',
++        score_range: options.sort === 'latest' ? '1,10' : '0,10',
++        tags: [section.tag, options.genre, options.region, year].filter(Boolean).join(','),
++      });
++      const data = await fetchBrowseJson<{ items: DoubanMetadata[]; total?: number }>(
++        `https://m.douban.com/rexxar/api/v2/${type}/recommend?${params}`, 'items', DOUBAN_CACHE_TTL_MS[options.sort]);
++      items.push(...data.items);
++      if (!data.items.length || (typeof data.total === 'number' && start + 100 >= data.total)) break;
++    }
++    return items;
++  })));
++  return new Map(streams.flat().map((item) => [String(item.id), item]));
++}
++
++function browseItem(subject: DoubanRawSubject, options: DoubanBrowseOptions, metadata?: DoubanMetadata): DoubanItem {
++  return {
++    id: String(subject.id), title: subject.title, cover: subject.cover || '',
++    rating: subject.rate && subject.rate !== '0' ? subject.rate : undefined,
++    ...(metadata?.rating?.count !== undefined ? { ratingCount: metadata.rating.count } : {}),
++    isTv: options.category === 'tv' || options.category === 'variety',
++  };
++}
++
++/** Filtering uses raw upstream offsets, so removed items never create skipped pages. */
++async function fetchFilteredBrowse(options: DoubanBrowseOptions): Promise<DoubanBrowseResponse> {
++  const items: DoubanItem[] = [];
++  const seen = new Set<string>();
++  let start = options.start;
++  // Bound each request; an unfinished scan exposes a continuation even if it found no cards.
++  for (let batch = 0; batch < 4; batch++) {
++    const target = doubanBrowseUrl({ ...options, start, limit: 49 });
++    const { data: raw } = await fetchBrowseJson<{ data: DoubanRawSubject[] }>(target, 'data', DOUBAN_CACHE_TTL_MS[options.sort]);
++    if (!raw.length) return { items, nextStart: null };
++    const metadata = await browseMetadata(options, start + raw.length);
++    for (let index = 0; index < raw.length; index++) {
++      const subject = raw[index];
++      const id = String(subject.id || '');
++      if (!id || !subject.title || seen.has(id)) continue;
++      seen.add(id);
++      const details = metadata.get(id);
++      const ratingCount = details?.rating?.count;
++      if (options.sort === 'latest' && (typeof ratingCount !== 'number' || !Number.isFinite(ratingCount) || ratingCount < DOUBAN_LATEST_MIN_RATINGS)) continue;
++      if (options.category === 'variety') {
++        // Some user-tagged sitcoms appear in Douban's variety recommendations.
++        const genres = details?.card_subtitle?.split('/')[2]?.trim().split(/\s+/) ?? [];
++        if (!DOUBAN_SECTIONS.find((entry) => entry.id === 'variety')!.genres.some((genre) => genres.includes(genre))) continue;
++      }
++      if (items.length === options.limit) return { items, nextStart: start + index };
++      items.push(browseItem(subject, options, details));
++    }
++    start += raw.length;
++    if (raw.length < 50) return { items, nextStart: null };
++  }
++  return { items, nextStart: start };
++}
++
++/** Four independent Douban categories with upstream filtering and pagination. */
++export async function fetchDoubanBrowse(options: DoubanBrowseOptions): Promise<DoubanBrowseResponse> {
++  const target = doubanBrowseUrl(options);
++  const cacheKey = `douban-browse:v2:${target}`;
++  const ttlMs = DOUBAN_CACHE_TTL_MS[options.sort];
++  const cached = getCache<DoubanBrowseResponse>(cacheKey);
++  if (cached) return cached;
++  if (options.sort === 'latest' || (options.sort === 'hot' && options.category === 'variety')) {
++    const result = await fetchFilteredBrowse(options);
++    setCache(cacheKey, result, ttlMs);
++    return result;
++  }
++  const { data: raw } = await fetchBrowseJson<{ data: DoubanRawSubject[] }>(target, 'data', ttlMs);
++  const seen = new Set<string>();
++  const items: DoubanItem[] = [];
++  for (const subject of raw.slice(0, options.limit)) {
++    const id = String(subject.id || '');
++    if (!id || !subject.title || seen.has(id)) continue;
++    seen.add(id);
++    items.push(browseItem(subject, options));
++  }
++  const result = { items, nextStart: raw.length > options.limit ? options.start + options.limit : null };
++  setCache(cacheKey, result, ttlMs);
++  return result;
++}
+diff --git a/src/lib/env-recommend-source.ts b/src/lib/env-recommend-source.ts
+index 7db8072..aa01004 100644
+--- a/src/lib/env-recommend-source.ts
++++ b/src/lib/env-recommend-source.ts
+@@ -3,7 +3,7 @@ export type RecommendSourceValue = 'douban' | 'bangumi' | 'hot-list';
+ /**
+  * 部署者通过 DEFAULT_RECOMMEND_SOURCE 环境变量指定的首页推荐数据源默认值。
+  * 可选值：douban（豆瓣热门）/ bangumi（Bangumi 新番放送）/ hot-list（影视热榜）。
+- * 未配置返回 undefined（沿用内置默认 hot-list）；取值非法时告警并忽略，不影响站点运行。
++ * 未配置返回 undefined（沿用内置默认 douban）；取值非法时告警并忽略，不影响站点运行。
+  */
+ export function getEnvRecommendSource(): RecommendSourceValue | undefined {
+   const raw = process.env.DEFAULT_RECOMMEND_SOURCE?.trim().toLowerCase();
+diff --git a/src/lib/store.test.ts b/src/lib/store.test.ts
+index e2c38d2..079c1a3 100644
+--- a/src/lib/store.test.ts
++++ b/src/lib/store.test.ts
+@@ -15,6 +15,22 @@ const store = () => useAppStore.getState();
+ 
+ const list = (urls: string[]): Omit<SourceConfig, 'key'>[] => urls.map((url) => ({ name: url, url }));
+ 
++describe('Douban homepage settings upgrade', () => {
++  it('switches version 2 browsers once without replacing sources, selected keys or favorites', async () => {
++    const saved = { recommendSource: 'hot-list', recommendSourceTouched: true, doubanEnabled: false, customAPIs: [{ key: 'custom_0', name: 'My source', url: 'https://example.com/api' }], selectedKeys: ['custom_0'], liveSubscriptions: [], liveFavorites: ['https://example.com/live.m3u8'] };
++    const migrated = await useAppStore.persist.getOptions().migrate!(saved, 2) as typeof saved;
++    expect(migrated).toMatchObject({ recommendSource: 'douban', recommendSourceTouched: true, doubanEnabled: true });
++    expect(migrated.customAPIs).toEqual(saved.customAPIs);
++    expect(migrated.selectedKeys).toEqual(saved.selectedKeys);
++    expect(migrated.liveFavorites).toEqual(saved.liveFavorites);
++  });
++  it('preserves a later explicit recommendation choice', async () => {
++    const saved = { recommendSource: 'bangumi', recommendSourceTouched: true, liveSubscriptions: [] };
++    const migrated = await useAppStore.persist.getOptions().migrate!(saved, 3) as typeof saved;
++    expect(migrated.recommendSource).toBe('bangumi');
++  });
++});
++
+ beforeEach(() => {
+   useAppStore.setState({
+     customAPIs: [],
+diff --git a/src/lib/store.ts b/src/lib/store.ts
+index 826e882..a990ca6 100644
+--- a/src/lib/store.ts
++++ b/src/lib/store.ts
+@@ -302,7 +302,7 @@ export const useAppStore = create<AppState>()(
+       yellowFilter: true,
+       adFilter: true,
+       doubanEnabled: true,
+-      recommendSource: 'hot-list',
++      recommendSource: 'douban',
+       recommendSourceTouched: false,
+       autoplayNext: true,
+       // 直连优先：豆瓣封面有公共镜像 + 内置代理两级兜底（见 buildImageCandidates），
+@@ -757,7 +757,7 @@ export const useAppStore = create<AppState>()(
+       // v1：直播源新增归属字段、最近观看新增 sourceUrl。
+       // v2：直播源归属改为多引用（fromSubscription 单值 → fromSubscriptions 数组）。
+       // 此前未声明 version 的存量数据会被视为 v0 并走 migrate 补齐。
+-      version: 2,
++      version: 3,
+       migrate: (persisted, version) => {
+         const state = { ...((persisted ?? {}) as Partial<AppState>) };
+         if (!Array.isArray(state.liveRecent)) state.liveRecent = [];
+@@ -780,6 +780,12 @@ export const useAppStore = create<AppState>()(
+             };
+           });
+         }
++        // Local homepage upgrade: switch existing browsers once, preserving sources and playback state.
++        if (version < 3) {
++          state.recommendSource = 'douban';
++          state.recommendSourceTouched = true;
++          state.doubanEnabled = true;
++        }
+         return state as AppState;
+       },
+       // envSources 由服务端每次下发，不进 localStorage；
+diff --git a/src/lib/subscription-sync.test.ts b/src/lib/subscription-sync.test.ts
+index 79f3d61..fbf6d76 100644
+--- a/src/lib/subscription-sync.test.ts
++++ b/src/lib/subscription-sync.test.ts
+@@ -135,6 +135,11 @@ describe('applyEnvPresets', () => {
+ });
+ 
+ describe('applyEnvPresets · DEFAULT_RECOMMEND_SOURCE（issue #918）', () => {
++  it('the new Douban factory default still accepts an explicit deployment preset', async () => {
++    useAppStore.setState({ recommendSource: 'douban', recommendSourceTouched: false });
++    await applyEnvPresets(status({ defaultRecommendSource: 'bangumi' }));
++    expect(useAppStore.getState().recommendSource).toBe('bangumi');
++  });
+   it('未配置时不改动推荐数据源', async () => {
+     useAppStore.setState({ recommendSource: 'hot-list', recommendSourceTouched: false });
+     await applyEnvPresets(status());
+diff --git a/src/lib/subscription-sync.ts b/src/lib/subscription-sync.ts
+index 1e26d88..3f0c688 100644
+--- a/src/lib/subscription-sync.ts
++++ b/src/lib/subscription-sync.ts
+@@ -117,13 +117,13 @@ export async function applyEnvPresets(status: AuthStatusResponse): Promise<void>
+     await syncEnvSubscriptions(status.defaultSubscriptions);
+   }
+   // 部署者通过 DEFAULT_RECOMMEND_SOURCE 指定的推荐数据源默认值：
+-  // 仅对未主动选择过的用户生效（仍为出厂默认 hot-list 且无「已选择」标记），
++  // 仅对仍为出厂默认 douban（兼容旧 hot-list）且无「已选择」标记的用户生效，
+   // 已有偏好的用户——包括清缓存前做过选择的——不被覆盖，用户的选择始终优先。
+   // 直写 setState 而非 updateSettings：自动预置不算用户主动选择，不打「已选择」标记；
+-  // 应用后当前值 ≠ hot-list，AuthProvider 的幂等重入天然跳过。
++  // 不改变用户主动选择标记，登录后的再次应用保持同一预置值。
+   if (status.defaultRecommendSource) {
+     const s = useAppStore.getState();
+-    if (!s.recommendSourceTouched && s.recommendSource === 'hot-list') {
++    if (!s.recommendSourceTouched && (s.recommendSource === 'douban' || s.recommendSource === 'hot-list')) {
+       useAppStore.setState({ recommendSource: status.defaultRecommendSource });
+     }
+   }
+diff --git a/src/lib/types.ts b/src/lib/types.ts
+index 3b16630..dc3ef17 100644
+--- a/src/lib/types.ts
++++ b/src/lib/types.ts
+@@ -50,6 +50,7 @@ export interface DoubanItem {
+   title: string;
+   cover: string;
+   rating?: string;
++  ratingCount?: number;
+   isTv?: boolean;
+ }
+ 

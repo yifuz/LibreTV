@@ -30,6 +30,7 @@ env:
 jobs:
   # 先跑类型检查与单测，避免把坏版本推成镜像
   verify:
+    if: github.repository == 'LibreSpark/LibreTV'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

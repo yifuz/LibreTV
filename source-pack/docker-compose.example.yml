@@ -1,0 +1,10 @@
+services:
+  libretv:
+    image: ghcr.io/librespark/libretv:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./.env.sources
+    environment:
+      PASSWORD: ${PASSWORD:?Set PASSWORD in .env}
