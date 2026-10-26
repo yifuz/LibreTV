@@ -10,11 +10,14 @@ import { requestShowDownloadManager } from './download-manager';
 import { Icon } from './icon';
 import { SearchHistoryDropdown, useSearchHistory } from './search-history';
 import { cn } from '@/lib/utils';
+import { useTvMode } from '@/lib/tv-mode';
 
 /** 顶部导航：Logo、搜索框（首页外）、历史、设置 */
 export function Header({ showSearch = false }: { showSearch?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
+  const tvMode = useTvMode((state) => state.enabled);
+  const setTvMode = useTvMode((state) => state.setEnabled);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -104,6 +107,7 @@ export function Header({ showSearch = false }: { showSearch?: boolean }) {
               关于
             </HeaderLink>
             <ThemeToggle />
+            <button type="button" className="px-2 py-1.5 rounded-md text-xs text-muted hover:text-content hover:bg-hover" aria-label="电视模式" aria-pressed={tvMode} title="电视遥控模式" onClick={() => setTvMode(!tvMode)}>电视</button>
             <IconButton label="观看历史" onClick={() => setHistoryOpen(true)}>
               <Icon name="clock" />
             </IconButton>

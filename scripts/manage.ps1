@@ -1,7 +1,8 @@
 param(
     [ValidateSet('start', 'stop', 'status')]
     [string]$Action = 'start',
-    [switch]$OpenBrowser
+    [switch]$OpenBrowser,
+    [switch]$Lan
 )
 
 $ErrorActionPreference = 'Stop'
@@ -9,6 +10,23 @@ $projectDir = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runtimeDir = Join-Path $projectDir '.local'
 $statePath = Join-Path $runtimeDir 'server.json'
 $siteUrl = 'http://localhost:8080'
+
+function Show-LanUrls {
+    $saved = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
+    if ($saved.hostname -ne '0.0.0.0') { return }
+    Write-Host 'LAN access enabled. Open one of these addresses in the TV browser:'
+    $adapters = @(Get-NetAdapter -Physical -ErrorAction SilentlyContinue | Where-Object Status -eq 'Up')
+    if ($adapters.Count -gt 0) {
+        $addresses = @(Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $adapters.ifIndex -ErrorAction SilentlyContinue)
+    } else {
+        $addresses = @(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue)
+    }
+    foreach ($address in $addresses) {
+        if ($address.IPAddress -notmatch '^(127\.|169\.254\.|0\.)') {
+            Write-Host "  http://$($address.IPAddress):8080/?tv=1"
+        }
+    }
+}
 
 function Get-ManagedServer {
     if (-not (Test-Path -LiteralPath $statePath)) { return $null }
@@ -33,7 +51,20 @@ if ($Action -eq 'status') {
     if (-not $server) { Write-Host 'LibreTV is stopped.'; exit 0 }
     $status = Invoke-RestMethod "$siteUrl/api/status" -TimeoutSec 5
     Write-Host "LibreTV $($status.version) is running at $siteUrl (PID $($server.Id))."
+    Show-LanUrls
     exit 0
+}
+# 电视入口可重启本脚本管理且已核验身份的本机进程，以切换到局域网监听。
+if ($Lan -and $server) {
+    $saved = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
+    if ($saved.hostname -ne '0.0.0.0') {
+        if (-not (Test-Path -LiteralPath (Join-Path $projectDir '.env.local'))) { throw 'Run npm run setup:local first.' }
+        if (-not (Test-Path -LiteralPath (Join-Path $projectDir '.next/BUILD_ID'))) { throw 'Run npm ci and npm run build first.' }
+        Stop-Process -Id $server.Id
+        $server.WaitForExit(10000) | Out-Null
+        Remove-Item -LiteralPath $statePath
+        $server = $null
+    }
 }
 if (-not $server) {
     $nodePath = (Get-Command node -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
@@ -43,11 +74,12 @@ if (-not $server) {
     [System.IO.Directory]::CreateDirectory($runtimeDir) | Out-Null
     $env:NEXT_TELEMETRY_DISABLED = '1'
     $nextPath = Join-Path $projectDir 'node_modules/next/dist/bin/next'
+    $listenAddress = if ($Lan) { '0.0.0.0' } else { '127.0.0.1' }
     $server = Start-Process -FilePath $nodePath -WorkingDirectory $projectDir `
-        -ArgumentList @(('"{0}"' -f $nextPath), 'start', '--port', '8080', '--hostname', '127.0.0.1') `
+        -ArgumentList @(('"{0}"' -f $nextPath), 'start', '--port', '8080', '--hostname', $listenAddress) `
         -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtimeDir 'server.log') `
         -RedirectStandardError (Join-Path $runtimeDir 'server-error.log') -PassThru
-    @{ pid = $server.Id; nodePath = $server.Path; startTicks = [string]$server.StartTime.ToUniversalTime().Ticks } |
+    @{ pid = $server.Id; nodePath = $server.Path; startTicks = [string]$server.StartTime.ToUniversalTime().Ticks; hostname = $listenAddress } |
         ConvertTo-Json | Set-Content -LiteralPath $statePath -Encoding utf8
 }
 $ready = $false
@@ -62,4 +94,8 @@ for ($attempt = 0; $attempt -lt 40; $attempt++) {
 }
 if (-not $ready) { throw 'LibreTV did not become ready. Check .local logs.' }
 Write-Host "LibreTV $($status.version) is ready at $siteUrl."
-if ($OpenBrowser) { Start-Process $siteUrl }
+Show-LanUrls
+if ($OpenBrowser) {
+    $browserUrl = if ($Lan) { "$siteUrl/?tv=1" } else { $siteUrl }
+    Start-Process $browserUrl
+}

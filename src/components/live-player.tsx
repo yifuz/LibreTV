@@ -6,6 +6,8 @@ import Hls, { type HlsConfig } from 'hls.js';
 import { Spinner } from './states';
 import { prefersTouchPointer } from '@/lib/touch-pointer';
 import { ART_DEFAULT_CONTROL_HIDE_MS, TOUCH_CONTROL_HIDE_MS } from '@/lib/control-hide';
+import { remoteKey, TV_BACK_EVENT } from '@/lib/tv-navigation';
+import { TvPlayerControls } from './tv-player-controls';
 
 /**
  * 直播播放器：与点播 player-shell 完全独立。
@@ -366,7 +368,18 @@ export function LivePlayer({ url, title, onPrevChannel, onNextChannel }: LivePla
       }
     }, 15000);
 
+    const onTvBack = (event: Event) => {
+      if (art.fullscreenWeb) { art.fullscreenWeb = false; event.preventDefault(); }
+    };
+    const onTvEnter = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || remoteKey(event) !== 'Enter' || !document.documentElement.classList.contains('tv-mode')) return;
+      if ((event.target as HTMLElement | null)?.matches('[data-tv-player]')) { art.toggle(); event.preventDefault(); }
+    };
+    document.addEventListener(TV_BACK_EVENT, onTvBack);
+    document.addEventListener('keydown', onTvEnter);
     return () => {
+      document.removeEventListener(TV_BACK_EVENT, onTvBack);
+      document.removeEventListener('keydown', onTvEnter);
       disposed = true;
       clearTimeout(startTimer);
       if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
@@ -381,8 +394,9 @@ export function LivePlayer({ url, title, onPrevChannel, onNextChannel }: LivePla
   }, [url, retryNonce, onPrevChannel, onNextChannel]);
 
   return (
-    <div className="relative w-full h-full">
+    <div data-tv-player tabIndex={0} aria-label="直播播放器，确定键播放或暂停" className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
+      <TvPlayerControls onToggle={() => artRef.current?.toggle()} />
       {/* 起播前的品牌占位图 */}
       {showPoster && !error && (
         <div

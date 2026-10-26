@@ -72,7 +72,7 @@ export function ConfirmDialog({
         <h2 className="text-base font-semibold text-content mb-2">{title}</h2>
         {message && <div className="text-sm text-muted leading-relaxed">{message}</div>}
         <div className="flex gap-2 justify-end mt-5">
-          <button ref={cancelRef} className="btn-ghost text-sm" onClick={onCancel}>
+          <button data-tv-close ref={cancelRef} className="btn-ghost text-sm" onClick={onCancel}>
             {cancelLabel}
           </button>
           <button

@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 电视遥控模式：远距离阅读、较大操作目标和持续可见的焦点。 */
+html.tv-mode { font-size: 18px; }
+.tv-player-web-fullscreen {
+  position: fixed !important;
+  inset: 0;
+  z-index: 70;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: #000;
+}
+.tv-mode :is(button, a[href], input, select, textarea, [tabindex="0"]):focus {
+  outline: 3px solid rgb(var(--c-accent)) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgb(var(--c-page) / 0.85);
+}
+.tv-mode :is(button, select, input) { min-height: 40px; }
+.tv-mode [data-browse-focus] { scroll-margin: 90px 20px 30px; }
+@media (min-width: 1024px) {
+  .tv-mode .max-w-6xl { max-width: 1600px; width: 95%; }
+  .tv-mode [data-tv-grid] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
 /*
  * 语义化配色（RGB 三元组，供 Tailwind 以 <alpha-value> 注入透明度）：
  * 深色主题沿用旧版 LibreTV 配色；浅色主题为对应的白底变体。

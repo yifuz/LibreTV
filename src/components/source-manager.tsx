@@ -30,6 +30,7 @@ import { useAuth } from './auth';
 import { api } from '@/lib/client-api';
 import { syncSourceSubscription } from '@/lib/subscription-sync';
 import { describeParseStats } from '@/lib/tvbox-parser';
+import { useTvMode } from '@/lib/tv-mode';
 
 /**
  * 设置抽屉：顶部两级导航。
@@ -693,10 +694,13 @@ function CustomProxyInput() {
 
 function HomePanel() {
   const store = useAppStore();
+  const tvMode = useTvMode((state) => state.enabled);
+  const setTvMode = useTvMode((state) => state.setEnabled);
   return (
     <section>
       <SectionTitle title="首页与内容过滤" />
       <div className="space-y-3">
+        <ToggleRow label="电视遥控模式" description="方向键移动焦点，确定键选择，返回键关闭弹窗或回退；此设置仅保存于当前浏览器" checked={tvMode} onChange={setTvMode} />
         <ToggleRow
           label="成人内容过滤"
           description="过滤“伦理片”等分类的结果"

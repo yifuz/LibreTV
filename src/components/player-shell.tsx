@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Artplayer from 'artplayer';
 import Hls, { type HlsConfig } from 'hls.js';
+import { remoteKey, TV_BACK_EVENT } from '@/lib/tv-navigation';
+import { TvPlayerControls } from './tv-player-controls';
 
 import { PlaybackRecovery, describeHlsError } from '@/lib/playback-recovery';
 import { createHlsLoader } from '@/lib/hls-loader';
@@ -476,14 +478,20 @@ export function PlayerShell({
 
     // —— 键盘快捷键（旧版 hotkey:false + 自定义逻辑的移植） ——
     const shortcuts = (e: KeyboardEvent) => {
+      if (e.defaultPrevented) return;
       const target = e.target as HTMLElement;
       // 输入框或按钮获得焦点时不劫持按键：否则空格会吞掉按钮的默认激活
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.closest('button')) return;
+      if (target.matches('input,textarea,select,[contenteditable="true"]') || target.closest('button,[role="listbox"]')) return;
       const current = artRef.current;
       if (!current) return;
       if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); return; } // 由父层处理集数切换
       if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); return; }
-      switch (e.key) {
+      switch (remoteKey(e)) {
+        case 'Enter':
+          if (document.documentElement.classList.contains('tv-mode') && target.matches('[data-tv-player]')) {
+            current.toggle(); showHint('播放/暂停'); e.preventDefault();
+          }
+          break;
         case 'ArrowLeft':
           if (current.currentTime > 5) { current.currentTime -= 5; showHint('快退 5s'); e.preventDefault(); }
           break;
@@ -505,6 +513,10 @@ export function PlayerShell({
       }
     };
     document.addEventListener('keydown', shortcuts);
+    const onTvBack = (event: Event) => {
+      if (art.fullscreenWeb) { art.fullscreenWeb = false; event.preventDefault(); }
+    };
+    document.addEventListener(TV_BACK_EVENT, onTvBack);
 
     // —— 移动端长按 3 倍速 ——
     let longPressTimer: ReturnType<typeof setTimeout> | null = null;
@@ -588,6 +600,7 @@ export function PlayerShell({
         } catch { /* 忽略 */ }
       }
       document.removeEventListener('keydown', shortcuts);
+      document.removeEventListener(TV_BACK_EVENT, onTvBack);
       document.removeEventListener('visibilitychange', saveOnHide);
       if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
       el?.removeEventListener('touchstart', onTouchStart);
@@ -648,8 +661,9 @@ export function PlayerShell({
   }, [adFilter]);
 
   return (
-    <div className="relative w-full h-full">
+    <div data-tv-player tabIndex={0} aria-label="播放器，左右快进快退，确定键播放或暂停" className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" style={{ WebkitTouchCallout: 'none' }} />
+      <TvPlayerControls onToggle={() => artRef.current?.toggle()} />
       {showPoster && !error && (
         <div
           className="absolute inset-0 bg-black pointer-events-none"
