@@ -20,6 +20,7 @@ describe('Douban route', () => {
     vi.mocked(fetchDoubanBrowse).mockResolvedValue({ items: [], nextStart: 48 });
     const response = await GET(request('category=anime&sort=rating&region=日本&genre=奇幻&year=2024&start=24&limit=24'));
     expect(response.status).toBe(200);
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
     expect(fetchDoubanBrowse).toHaveBeenCalledWith({ category: 'anime', sort: 'rating', region: '日本', genre: '奇幻', year: '2024', start: 24, limit: 24 });
     expect(await response.json()).toEqual({ items: [], nextStart: 48 });
   });

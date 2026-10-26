@@ -1,15 +1,15 @@
 import type { DoubanItem } from './types';
-import { fetchUpstream, getCache, setCache } from './fetch-utils';
+import { fetchUpstream } from './fetch-utils';
+import { recommendationCache } from './recommendation-cache';
+import { doubanRequestQueue } from './douban-request-queue';
 import { DOUBAN_CACHE_TTL_MS, DOUBAN_LATEST_MIN_RATINGS, DOUBAN_SECTIONS, doubanBrowseUrl, type DoubanBrowseOptions, type DoubanBrowseResponse } from './douban-browse';
 
 /**
- * 豆瓣推荐数据获取（服务端直连，带内存缓存与降级链）。
- * 旧版在浏览器里经公共 CORS 代理请求豆瓣（隐私差且不稳定），
- * 重构后由服务端直连，仅在直连被拒时降级到公共代理。
+ * 豆瓣推荐：共享落盘缓存、请求合并、串行限速及访问限制冷却。
+ * 只有普通网络失败可使用部署者配置的代理，风控响应立即停止。
  */
 
 const DOUBAN_API = 'https://movie.douban.com/j/search_subjects';
-const ACCESS_COOLDOWN_KEY = 'douban-access-limited';
 class DoubanAccessLimitedError extends Error {
   constructor() { super('豆瓣暂时限制访问，请稍后再试'); }
 }
@@ -36,94 +36,54 @@ export async function fetchDoubanRecommend(
   pageStart: number,
   pageSize: number
 ): Promise<DoubanItem[]> {
-  const cacheKey = `douban:${type}:${tag}:${pageStart}:${pageSize}`;
-  const cached = getCache<DoubanItem[]>(cacheKey);
-  if (cached) return cached;
-
   const target = `${DOUBAN_API}?type=${type}&tag=${encodeURIComponent(tag)}&sort=recommend&page_limit=${pageSize}&page_start=${pageStart}`;
-
-  let raw: DoubanRawSubject[] | undefined;
-
-  // 1) 服务端直连
-  try {
-    const res = await fetchUpstream(target, {
-      timeoutMs: 8000,
-      headers: { 'User-Agent': UA, Referer: 'https://movie.douban.com/', Accept: 'application/json' },
-    });
-    if (res.ok) {
-      const data = (await res.json()) as { subjects?: DoubanRawSubject[] };
-      raw = data.subjects;
-    }
-  } catch {
-    // 忽略，走降级
-  }
-
-  // 2) 降级：经 FALLBACK_CORS_PROXY
-  if (!raw) {
-    for (const proxy of fallbackProxies()) {
-      try {
-        const res = await fetchUpstream(proxy + encodeURIComponent(target), {
-          timeoutMs: 8000,
-          headers: { Accept: 'application/json' },
-        });
-        if (res.ok) {
-          const data = (await res.json()) as { subjects?: DoubanRawSubject[] };
-          raw = data.subjects;
-          if (raw) break;
-        }
-      } catch {
-        // 继续尝试下一个
-      }
-    }
-  }
-
-  if (!raw) throw new Error('豆瓣推荐获取失败');
-
-  const items: DoubanItem[] = raw.map((s) => ({
-    id: s.id,
-    title: s.title,
-    cover: s.cover,
-    rating: s.rate && s.rate !== '0' ? s.rate : undefined,
-    isTv: type === 'tv',
-  }));
-
-  setCache(cacheKey, items, DOUBAN_CACHE_TTL_MS.hot);
-  return items;
+  const result = await recommendationCache.remember(`douban-legacy:v3:${target}`, DOUBAN_CACHE_TTL_MS.hot, async () => {
+    const { subjects } = await fetchBrowseJson<{ subjects: DoubanRawSubject[] }>(target, 'subjects', DOUBAN_CACHE_TTL_MS.hot);
+    return subjects.map((s) => ({
+      id: s.id, title: s.title, cover: s.cover,
+      rating: s.rate && s.rate !== '0' ? s.rate : undefined,
+      isTv: type === 'tv',
+    }));
+  });
+  return result.value;
 }
 
 /** Only fixed Douban endpoints and deployment-configured fallback proxies are used. */
-async function fetchBrowseJson<T>(target: string, field: 'data' | 'items', ttlMs: number): Promise<T> {
-  const cacheKey = `douban-json:${target}`;
-  const cached = getCache<T>(cacheKey);
-  if (cached) return cached;
-  if (getCache<boolean>(ACCESS_COOLDOWN_KEY)) throw new DoubanAccessLimitedError();
-  const attempts = [target, ...fallbackProxies().map((proxy) => proxy + encodeURIComponent(target))];
-  for (const address of attempts) {
-    try {
-      const response = await fetchUpstream(address, {
-        timeoutMs: 8000, retries: 0,
-        headers: { 'User-Agent': UA, Referer: 'https://movie.douban.com/', Accept: 'application/json' },
-      });
-      if (response.status === 429) {
-        setCache(ACCESS_COOLDOWN_KEY, true, 5 * 60_000);
-        throw new DoubanAccessLimitedError();
+async function fetchBrowseJson<T>(target: string, field: 'data' | 'items' | 'subjects', ttlMs: number): Promise<T> {
+  const result = await recommendationCache.remember<T>(`douban-json:v3:${target}`, ttlMs, async () => {
+    if (await recommendationCache.getCooldownUntil() > Date.now()) throw new DoubanAccessLimitedError();
+    const attempts = [target, ...fallbackProxies().map((proxy) => proxy + encodeURIComponent(target))];
+    for (const address of attempts) {
+      try {
+        const data = await doubanRequestQueue.run(async () => {
+          // 必须在队列执行时再检查：前一个请求可能刚触发风控。
+          if (await recommendationCache.getCooldownUntil() > Date.now()) throw new DoubanAccessLimitedError();
+          const response = await fetchUpstream(address, {
+            timeoutMs: 8000, retries: 0,
+            headers: { 'User-Agent': UA, Referer: 'https://movie.douban.com/', Accept: 'application/json' },
+          });
+          if (response.status === 429 || response.status === 403) {
+            await recommendationCache.setCooldownUntil(Date.now() + 5 * 60_000);
+            throw new DoubanAccessLimitedError();
+          }
+          if (!response.ok) throw new Error('豆瓣接口响应失败');
+          const data = await response.json();
+          if (data?.r === 1 && typeof data.msg === 'string' && /异常请求|登录再试|访问频繁/.test(data.msg)) {
+            await recommendationCache.setCooldownUntil(Date.now() + 5 * 60_000);
+            throw new DoubanAccessLimitedError();
+          }
+          if (!data || !Array.isArray(data[field])) throw new Error('豆瓣推荐响应无效');
+          return data as T;
+        });
+        return data;
+      } catch (error) {
+        if (error instanceof DoubanAccessLimitedError) throw error;
+        // 普通故障只尝试部署者明确配置的备用地址。
       }
-      if (!response.ok) continue;
-      const data = await response.json();
-      if (data?.r === 1 && typeof data.msg === 'string' && /异常请求|登录再试|访问频繁/.test(data.msg)) {
-        setCache(ACCESS_COOLDOWN_KEY, true, 5 * 60_000);
-        throw new DoubanAccessLimitedError();
-      }
-      if (data && Array.isArray(data[field])) {
-        setCache(cacheKey, data, ttlMs);
-        return data as T;
-      }
-    } catch (error) {
-      if (error instanceof DoubanAccessLimitedError) throw error;
-      // Try only deployment-configured fallbacks for ordinary network failures.
     }
-  }
-  throw new Error('豆瓣推荐暂时无法读取，请稍后重试');
+    throw new Error('豆瓣推荐暂时无法读取，请稍后重试');
+  }, false); // 原始数据不单独用旧数据拼装新榜单；失败兜底由完整页面缓存处理。
+  return result.value;
 }
 
 interface DoubanMetadata {
@@ -202,25 +162,19 @@ async function fetchFilteredBrowse(options: DoubanBrowseOptions): Promise<Douban
 /** Four independent Douban categories with upstream filtering and pagination. */
 export async function fetchDoubanBrowse(options: DoubanBrowseOptions): Promise<DoubanBrowseResponse> {
   const target = doubanBrowseUrl(options);
-  const cacheKey = `douban-browse:v2:${target}`;
   const ttlMs = DOUBAN_CACHE_TTL_MS[options.sort];
-  const cached = getCache<DoubanBrowseResponse>(cacheKey);
-  if (cached) return cached;
-  if (options.sort === 'latest' || (options.sort === 'hot' && options.category === 'variety')) {
-    const result = await fetchFilteredBrowse(options);
-    setCache(cacheKey, result, ttlMs);
-    return result;
-  }
-  const { data: raw } = await fetchBrowseJson<{ data: DoubanRawSubject[] }>(target, 'data', ttlMs);
-  const seen = new Set<string>();
-  const items: DoubanItem[] = [];
-  for (const subject of raw.slice(0, options.limit)) {
-    const id = String(subject.id || '');
-    if (!id || !subject.title || seen.has(id)) continue;
-    seen.add(id);
-    items.push(browseItem(subject, options));
-  }
-  const result = { items, nextStart: raw.length > options.limit ? options.start + options.limit : null };
-  setCache(cacheKey, result, ttlMs);
-  return result;
+  const result = await recommendationCache.remember<DoubanBrowseResponse>(`douban-browse:v3:${target}`, ttlMs, async () => {
+    if (options.sort === 'latest' || (options.sort === 'hot' && options.category === 'variety')) return fetchFilteredBrowse(options);
+    const { data: raw } = await fetchBrowseJson<{ data: DoubanRawSubject[] }>(target, 'data', ttlMs);
+    const seen = new Set<string>();
+    const items: DoubanItem[] = [];
+    for (const subject of raw.slice(0, options.limit)) {
+      const id = String(subject.id || '');
+      if (!id || !subject.title || seen.has(id)) continue;
+      seen.add(id);
+      items.push(browseItem(subject, options));
+    }
+    return { items, nextStart: raw.length > options.limit ? options.start + options.limit : null };
+  });
+  return { ...result.value, cache: { updatedAt: result.updatedAt, stale: result.stale } };
 }

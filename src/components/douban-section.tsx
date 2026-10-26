@@ -53,7 +53,7 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
     queryFn: ({ pageParam, signal }) => api.douban({ category, sort, region, genre, year, start: pageParam, limit: DOUBAN_PAGE_SIZE }, signal),
     getNextPageParam: nextDoubanPage,
     enabled: verified === true,
-    staleTime: DOUBAN_CACHE_TTL_MS[sort],
+    staleTime: (query) => query.state.data?.pages.some((page) => page.cache?.stale) ? 60_000 : DOUBAN_CACHE_TTL_MS[sort],
     gcTime: DOUBAN_CACHE_TTL_MS[sort],
     retry: false,
   });
@@ -63,6 +63,7 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
     seen.add(item.id);
     return true;
   });
+  const stalePage = query.data?.pages.find((page) => page.cache?.stale);
 
   return (
     <section id={`recommend-${category}`} aria-labelledby={`recommend-${category}-title`} className="scroll-mt-20" data-recommend-category={category}>
@@ -80,6 +81,12 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
       <p className="text-xs text-faint mb-3">
         {sort === 'hot' ? '按豆瓣近期热度推荐' : sort === 'latest' ? `按首映／首播时间排列 · 至少 ${DOUBAN_LATEST_MIN_RATINGS} 人评价` : '按豆瓣评分排列'}
       </p>
+      {stalePage?.cache && (
+        <div role="status" className="text-xs text-warning mb-3 flex flex-wrap items-center gap-2">
+          <span>豆瓣暂时不可用，显示 {new Date(stalePage.cache.updatedAt).toLocaleString('zh-CN')} 保存的推荐。</span>
+          <button type="button" className="btn-ghost btn-sm" disabled={query.isFetching} onClick={() => void query.refetch()}>重试</button>
+        </div>
+      )}
       <div className="flex flex-wrap gap-3 mb-4">
         <label className="flex items-center gap-2 text-xs text-muted">
           地区

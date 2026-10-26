@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : '筛选参数无效' }, { status: 400 });
     }
-    try { return NextResponse.json(await fetchDoubanBrowse(options)); }
+    try { return NextResponse.json(await fetchDoubanBrowse(options), { headers: { 'Cache-Control': 'private, no-store' } }); }
     catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : '豆瓣推荐获取失败' }, { status: 502 });
     }

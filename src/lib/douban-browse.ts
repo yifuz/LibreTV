@@ -55,6 +55,7 @@ export interface DoubanBrowseOptions {
 export interface DoubanBrowseResponse {
   items: DoubanItem[];
   nextStart: number | null;
+  cache?: { updatedAt: number; stale: boolean };
 }
 
 export function nextDoubanPage(lastPage: DoubanBrowseResponse, pages: DoubanBrowseResponse[]): number | undefined {

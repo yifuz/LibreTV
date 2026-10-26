@@ -1,16 +1,25 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('./fetch-utils', () => ({ fetchUpstream: vi.fn(), getCache: vi.fn(), setCache: vi.fn() }));
-import { fetchUpstream, getCache, setCache } from './fetch-utils';
-import { fetchDoubanBrowse } from './douban';
+vi.mock('./fetch-utils', () => ({ fetchUpstream: vi.fn() }));
+vi.mock('./recommendation-cache', async (importOriginal) => ({
+  ...await importOriginal<typeof import('./recommendation-cache')>(),
+  recommendationCache: { remember: vi.fn(), getCooldownUntil: vi.fn(), setCooldownUntil: vi.fn() },
+}));
+vi.mock('./douban-request-queue', () => ({ doubanRequestQueue: { run: <T>(task: () => Promise<T>) => task() } }));
+import { fetchUpstream } from './fetch-utils';
+import { RecommendationCache, recommendationCache } from './recommendation-cache';
+import { fetchDoubanBrowse, fetchDoubanRecommend } from './douban';
 import type { DoubanBrowseOptions } from './douban-browse';
 
 const options: DoubanBrowseOptions = { category: 'movie', sort: 'hot', region: '', genre: '', year: '', start: 0, limit: 24 };
 const subject = (id: number) => ({ id: String(id), title: `Title ${id}`, cover: 'https://img1.doubanio.com/example.jpg', rate: '8.1' });
-beforeEach(() => {
-  vi.resetAllMocks();
-  vi.mocked(getCache).mockReturnValue(undefined);
-});
+function resetCache() {
+  const cache = new RecommendationCache();
+  vi.mocked(recommendationCache.remember).mockImplementation(cache.remember.bind(cache));
+  vi.mocked(recommendationCache.getCooldownUntil).mockImplementation(cache.getCooldownUntil.bind(cache));
+  vi.mocked(recommendationCache.setCooldownUntil).mockImplementation(cache.setCooldownUntil.bind(cache));
+}
+beforeEach(() => { vi.resetAllMocks(); resetCache(); });
 
 describe('Douban upstream pagination', () => {
   it('returns 24 cards and a real next offset using one lookahead item', async () => {
@@ -24,6 +33,7 @@ describe('Douban upstream pagination', () => {
 
   it('finishes pagination when the upstream has no lookahead, including an empty last page', async () => {
     for (const count of [0, 7, 24]) {
+      resetCache();
       vi.mocked(fetchUpstream).mockResolvedValue(new Response(JSON.stringify({ data: Array.from({ length: count }, (_, i) => subject(i + 25)) })));
       const result = await fetchDoubanBrowse({ ...options, start: 24 });
       expect(result.items).toHaveLength(count);
@@ -45,7 +55,7 @@ describe('Douban upstream pagination', () => {
     await fetchDoubanBrowse({ ...options, category: 'tv', genre: '悬疑', region: '中国大陆' });
     await fetchDoubanBrowse({ ...options, year: '2024' });
     await fetchDoubanBrowse({ ...options, year: '2025' });
-    const keys = vi.mocked(setCache).mock.calls.map((call) => call[0]).filter((key) => key.startsWith('douban-browse:'));
+    const keys = vi.mocked(recommendationCache.remember).mock.calls.map((call) => call[0]).filter((key) => key.startsWith('douban-browse:'));
     expect(new Set(keys).size).toBe(4);
   });
 
@@ -58,9 +68,6 @@ describe('Douban upstream pagination', () => {
 describe('Extended recommendation cache lifetimes', () => {
   it.each([['hot', 6], ['latest', 6], ['rating', 24]] as const)(
     'reuses %s results for %i hours and only fetches upstream again after expiry', async (sort, hours) => {
-      const realCache = await vi.importActual<typeof import('./fetch-utils')>('./fetch-utils');
-      vi.mocked(getCache).mockImplementation(realCache.getCache);
-      vi.mocked(setCache).mockImplementation(realCache.setCache);
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2026-10-21T00:00:00Z'));
       try {
@@ -74,15 +81,15 @@ describe('Extended recommendation cache lifetimes', () => {
         expect(initialCalls).toBe(sort === 'latest' ? 2 : 1);
 
         vi.advanceTimersByTime(30 * 60_000);
-        expect(await fetchDoubanBrowse({ ...options, sort })).toBe(first);
+        expect(await fetchDoubanBrowse({ ...options, sort })).toEqual(first);
         expect(fetchUpstream).toHaveBeenCalledTimes(initialCalls);
 
         vi.advanceTimersByTime(hours * 60 * 60_000 - 30 * 60_000 - 1);
-        expect(await fetchDoubanBrowse({ ...options, sort })).toBe(first);
+        expect(await fetchDoubanBrowse({ ...options, sort })).toEqual(first);
         expect(fetchUpstream).toHaveBeenCalledTimes(initialCalls);
 
         vi.advanceTimersByTime(2);
-        expect(await fetchDoubanBrowse({ ...options, sort })).not.toBe(first);
+        expect((await fetchDoubanBrowse({ ...options, sort })).cache!.updatedAt).toBeGreaterThan(first.cache!.updatedAt);
         // Both the final page and its underlying list / metadata caches must expire.
         expect(fetchUpstream).toHaveBeenCalledTimes(initialCalls * 2);
       } finally { vi.useRealTimers(); }
@@ -137,7 +144,7 @@ describe('Recent heat and moderately filtered latest releases', () => {
     const ordered = Array.from({ length: 250 }, (_, i) => subject(i + 1));
     mockFeeds(ordered, ordered.map((_, i) => metadata(i + 1, 1)));
     const result = await fetchDoubanBrowse({ ...options, sort: 'latest' });
-    expect(result).toEqual({ items: [], nextStart: 200 });
+    expect(result).toMatchObject({ items: [], nextStart: 200 });
     const second = await fetchDoubanBrowse({ ...options, sort: 'latest', start: 200 });
     expect(second.nextStart).toBeNull();
   });
@@ -188,20 +195,54 @@ describe('Recent heat and moderately filtered latest releases', () => {
   it('sets a cooldown on explicit rate limits instead of trying another access path', async () => {
     for (const response of [new Response(JSON.stringify({ msg: '检测到有异常请求，请登录再试!', r: 1 })), new Response('', { status: 429 })]) {
       vi.clearAllMocks();
+      resetCache();
       vi.mocked(fetchUpstream).mockResolvedValue(response);
       await expect(fetchDoubanBrowse(options)).rejects.toThrow('豆瓣暂时限制访问');
-      expect(setCache).toHaveBeenCalledWith('douban-access-limited', true, 300000);
+      expect(await recommendationCache.getCooldownUntil()).toBeGreaterThan(Date.now() + 299_000);
       expect(fetchUpstream).toHaveBeenCalledTimes(1);
     }
   });
 
   it('serves cached pages during a cooldown and makes no fresh upstream request', async () => {
-    const cached = { items: [{ id: '1', title: 'Cached', cover: '' }], nextStart: null };
-    vi.mocked(getCache).mockImplementation((key) => key.startsWith('douban-browse:') ? cached : true);
-    expect(await fetchDoubanBrowse(options)).toBe(cached);
-    expect(fetchUpstream).not.toHaveBeenCalled();
-    vi.mocked(getCache).mockImplementation((key) => key === 'douban-access-limited' ? true : undefined);
-    await expect(fetchDoubanBrowse(options)).rejects.toThrow('豆瓣暂时限制访问');
-    expect(fetchUpstream).not.toHaveBeenCalled();
+    vi.mocked(fetchUpstream).mockResolvedValue(new Response(JSON.stringify({ data: [subject(1)] })));
+    const cached = await fetchDoubanBrowse(options);
+    await recommendationCache.setCooldownUntil(Date.now() + 300_000);
+    expect(await fetchDoubanBrowse(options)).toEqual(cached);
+    await expect(fetchDoubanBrowse({ ...options, region: '日本' })).rejects.toThrow('豆瓣暂时限制访问');
+    expect(fetchUpstream).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Recommendation traffic and outage protection', () => {
+  it('coalesces eight simultaneous requests into one upstream call', async () => {
+    vi.mocked(fetchUpstream).mockImplementation(async () => new Response(JSON.stringify({ data: [subject(1)] })));
+    const results = await Promise.all(Array.from({ length: 8 }, () => fetchDoubanBrowse(options)));
+    expect(fetchUpstream).toHaveBeenCalledTimes(1);
+    expect(results.every((result) => result.items[0].id === '1')).toBe(true);
+  });
+
+  it('serves an expired page on failure without refreshing its age or hammering the upstream', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.mocked(fetchUpstream).mockImplementation(async () => new Response(JSON.stringify({ data: [subject(1)] })));
+      const original = await fetchDoubanBrowse(options);
+      await vi.advanceTimersByTimeAsync(6 * 60 * 60_000 + 1);
+      vi.mocked(fetchUpstream).mockRejectedValue(new Error('offline'));
+      const stale = await fetchDoubanBrowse(options);
+      expect(stale.items).toEqual(original.items);
+      expect(stale.cache).toEqual({ updatedAt: original.cache!.updatedAt, stale: true });
+      expect(fetchUpstream).toHaveBeenCalledTimes(2);
+      expect(await fetchDoubanBrowse(options)).toEqual(stale);
+      expect(fetchUpstream).toHaveBeenCalledTimes(2);
+    } finally { vi.useRealTimers(); }
+  });
+
+  it('puts legacy clients behind the same cache and access cooldown', async () => {
+    vi.mocked(fetchUpstream).mockImplementation(async () => new Response(JSON.stringify({ subjects: [subject(1)] })));
+    await Promise.all(Array.from({ length: 8 }, () => fetchDoubanRecommend('movie', '热门', 0, 24)));
+    expect(fetchUpstream).toHaveBeenCalledTimes(1);
+    await recommendationCache.setCooldownUntil(Date.now() + 300_000);
+    await expect(fetchDoubanRecommend('tv', '热门', 0, 24)).rejects.toThrow('豆瓣暂时限制访问');
+    expect(fetchUpstream).toHaveBeenCalledTimes(1);
   });
 });

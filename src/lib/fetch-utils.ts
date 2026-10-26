@@ -130,17 +130,20 @@ export function getCache<T>(key: string): T | undefined {
     cache.delete(key);
     return undefined;
   }
+  cache.delete(key);
+  cache.set(key, entry);
   return entry.value as T;
 }
 
 export function setCache(key: string, value: unknown, ttlMs: number): void {
-  if (cache.size > 500) {
-    // 简单防膨胀：超限时清掉最早过期的条目
+  if (cache.size >= 500) {
+    // 逐条清理过期及最久未使用的条目，避免整批清空有效缓存。
     const now = Date.now();
     for (const [k, v] of cache) {
       if (now > v.expiresAt) cache.delete(k);
     }
-    if (cache.size > 500) cache.clear();
   }
+  cache.delete(key);
   cache.set(key, { value, expiresAt: Date.now() + ttlMs });
+  while (cache.size > 500) cache.delete(cache.keys().next().value!);
 }

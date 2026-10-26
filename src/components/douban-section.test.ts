@@ -26,6 +26,13 @@ afterEach(() => { client.clear(); vi.unstubAllGlobals(); });
 const render = () => renderToStaticMarkup(React.createElement(QueryClientProvider, { client }, React.createElement(RecommendSection, { onPick: () => {} })));
 
 describe('Four-category recommendation layout', () => {
+  it('labels fallback recommendations without hiding cached cards', () => {
+    client.setQueryData(['douban-browse', 'movie', 'hot', '', '', ''], { pages: [{ items: [{ id: 'saved', title: 'Saved film', cover: '' }], nextStart: null, cache: { stale: true, updatedAt: Date.now() - 86400000 } }], pageParams: [0] });
+    const html = render();
+    expect(html).toContain('豆瓣暂时不可用');
+    expect(html).toContain('保存的推荐');
+    expect(html).toContain('Saved film');
+  });
   it('renders 24 cards and separate filters/load-more controls in every section', () => {
     const html = render();
     for (const [category, title] of [['movie', '电影'], ['tv', '电视剧'], ['variety', '综艺'], ['anime', '动漫']]) {

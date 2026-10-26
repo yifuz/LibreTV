@@ -20,7 +20,8 @@ ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
 # 非 root 用户
-RUN addgroup -S nodejs && adduser -S nextjs -G nodejs
+RUN addgroup -S nodejs && adduser -S nextjs -G nodejs \
+    && mkdir -p /app/.local/cache && chown -R nextjs:nodejs /app/.local
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static

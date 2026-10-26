@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchUpstream } from './fetch-utils';
+import { fetchUpstream, getCache, setCache } from './fetch-utils';
 
 /**
  * 安全跳转测试：mock 全局 fetch，验证 302 跳转到内网地址会被拒绝，
@@ -20,6 +20,17 @@ function mockFetch(handlers: Array<(url: string) => Response>) {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('bounded memory cache', () => {
+  it('keeps recently used entries when the capacity is exceeded', () => {
+    for (let i = 0; i < 500; i++) setCache(`lru-test-${i}`, i, 60_000);
+    expect(getCache('lru-test-0')).toBe(0);
+    setCache('lru-test-new', 'new', 60_000);
+    expect(getCache('lru-test-0')).toBe(0);
+    expect(getCache('lru-test-499')).toBe(499);
+    expect(getCache('lru-test-1')).toBeUndefined();
+  });
 });
 
 describe('fetchUpstream 安全跳转', () => {
