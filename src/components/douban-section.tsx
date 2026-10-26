@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/client-api';
 import { useAppStore } from '@/lib/store';
@@ -8,23 +8,27 @@ import { cn } from '@/lib/utils';
 import type { DoubanItem } from '@/lib/types';
 import { DoubanCard } from './video-card';
 import { useAuth } from './auth';
-import { DOUBAN_CACHE_TTL_MS, DOUBAN_LATEST_MIN_RATINGS, DOUBAN_PAGE_SIZE, DOUBAN_REGIONS, DOUBAN_SECTIONS, DOUBAN_SORTS, DOUBAN_YEARS, nextDoubanPage, type DoubanCategory, type DoubanSort } from '@/lib/douban-browse';
+import { Dropdown } from './dropdown';
+import { useSectionVisible } from './use-section-visible';
+import { DEFAULT_BROWSE_FILTERS, hydrateHomeBrowseFilters, useHomeBrowseState } from '@/lib/home-browse-state';
+import { DOUBAN_CACHE_TTL_MS, DOUBAN_LATEST_MIN_RATINGS, DOUBAN_PAGE_SIZE, DOUBAN_REGIONS, DOUBAN_SECTIONS, DOUBAN_SORTS, DOUBAN_YEARS, nextDoubanPage, type DoubanCategory } from '@/lib/douban-browse';
 
 const WEEKDAYS = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 
 /** Douban is the default; alternative recommendation modes remain available in settings. */
-export function RecommendSection({ onPick }: { onPick: (title: string) => void }) {
+export function RecommendSection({ onPick, active = true }: { onPick: (title: string) => void; active?: boolean }) {
+  useEffect(() => { hydrateHomeBrowseFilters(); }, []);
   const doubanEnabled = useAppStore((s) => s.doubanEnabled);
   const recommendSource = useAppStore((s) => s.recommendSource);
 
   if (!doubanEnabled) return null;
-  if (recommendSource === 'bangumi') return <BangumiView onPick={onPick} />;
-  if (recommendSource === 'hot-list') return <HotListView onPick={onPick} />;
-  return <DoubanView onPick={onPick} />;
+  if (recommendSource === 'bangumi') return <BangumiView onPick={onPick} active={active} />;
+  if (recommendSource === 'hot-list') return <HotListView onPick={onPick} active={active} />;
+  return <DoubanView onPick={onPick} active={active} />;
 }
 
 /** Each category owns its filters, cached pages, errors and next-page requests. */
-function DoubanView({ onPick }: { onPick: (title: string) => void }) {
+function DoubanView({ onPick, active }: { onPick: (title: string) => void; active: boolean }) {
   return (
     <div className="space-y-10" aria-label="豆瓣分类推荐">
       <nav className="flex flex-wrap items-center gap-2" aria-label="推荐分区导航">
@@ -35,24 +39,24 @@ function DoubanView({ onPick }: { onPick: (title: string) => void }) {
           </a>
         ))}
       </nav>
-      {DOUBAN_SECTIONS.map((section) => <DoubanCategorySection key={section.id} category={section.id} onPick={onPick} />)}
+      {DOUBAN_SECTIONS.map((section) => <DoubanCategorySection key={section.id} category={section.id} onPick={onPick} active={active} />)}
     </div>
   );
 }
 
-function DoubanCategorySection({ category, onPick }: { category: DoubanCategory; onPick: (title: string) => void }) {
+function DoubanCategorySection({ category, onPick, active }: { category: DoubanCategory; onPick: (title: string) => void; active: boolean }) {
   const section = DOUBAN_SECTIONS.find((entry) => entry.id === category)!;
   const { checked, verified, openLogin } = useAuth();
-  const [sort, setSort] = useState<DoubanSort>('hot');
-  const [region, setRegion] = useState('');
-  const [genre, setGenre] = useState('');
-  const [year, setYear] = useState('');
+  const ready = useHomeBrowseState((state) => state.ready);
+  const { sort, region, genre, year } = useHomeBrowseState((state) => state.filters[category]);
+  const setFilters = useHomeBrowseState((state) => state.setFilters);
+  const { ref, visible } = useSectionVisible(active);
   const query = useInfiniteQuery({
     queryKey: ['douban-browse', category, sort, region, genre, year],
     initialPageParam: 0,
     queryFn: ({ pageParam, signal }) => api.douban({ category, sort, region, genre, year, start: pageParam, limit: DOUBAN_PAGE_SIZE }, signal),
     getNextPageParam: nextDoubanPage,
-    enabled: verified === true,
+    enabled: verified === true && ready && active && (category === 'movie' || visible),
     staleTime: (query) => query.state.data?.pages.some((page) => page.cache?.stale) ? 60_000 : DOUBAN_CACHE_TTL_MS[sort],
     gcTime: DOUBAN_CACHE_TTL_MS[sort],
     retry: false,
@@ -66,12 +70,12 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
   const stalePage = query.data?.pages.find((page) => page.cache?.stale);
 
   return (
-    <section id={`recommend-${category}`} aria-labelledby={`recommend-${category}-title`} className="scroll-mt-20" data-recommend-category={category}>
+    <section ref={ref} id={`recommend-${category}`} aria-labelledby={`recommend-${category}-title`} className="scroll-mt-20" data-recommend-category={category}>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <h2 id={`recommend-${category}-title`} className="text-xl font-semibold text-content">{section.title}</h2>
         <div className="flex items-center gap-1 rounded-lg bg-chip p-0.5" role="group" aria-label={`${section.title}排序`}>
           {DOUBAN_SORTS.map((option) => (
-            <button key={option.id} type="button" onClick={() => setSort(option.id)} aria-pressed={sort === option.id}
+            <button key={option.id} type="button" onClick={() => setFilters(category, { sort: option.id })} aria-pressed={sort === option.id}
               className={cn('px-3 py-1.5 rounded-md text-sm transition-colors', sort === option.id ? 'bg-accent text-on-accent' : 'text-muted hover:text-content')}>
               {option.title}
             </button>
@@ -90,27 +94,18 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
       <div className="flex flex-wrap gap-3 mb-4">
         <label className="flex items-center gap-2 text-xs text-muted">
           地区
-          <select aria-label={`${section.title}地区`} className="input py-1.5 text-sm min-w-0" value={region} onChange={(event) => setRegion(event.target.value)}>
-            <option value="">全部地区</option>
-            {DOUBAN_REGIONS.map((country) => <option key={country} value={country}>{country}</option>)}
-          </select>
+          <Dropdown ariaLabel={`${section.title}地区`} value={region} onChange={(region) => setFilters(category, { region })} options={[{ value: '', label: '全部地区' }, ...DOUBAN_REGIONS.map((value) => ({ value, label: value }))]} />
         </label>
         <label className="flex items-center gap-2 text-xs text-muted">
           类型
-          <select aria-label={`${section.title}类型`} className="input py-1.5 text-sm min-w-0" value={genre} onChange={(event) => setGenre(event.target.value)}>
-            <option value="">全部类型</option>
-            {section.genres.map((value) => <option key={value} value={value}>{value}</option>)}
-          </select>
+          <Dropdown ariaLabel={`${section.title}类型`} value={genre} onChange={(genre) => setFilters(category, { genre })} options={[{ value: '', label: '全部类型' }, ...section.genres.map((value) => ({ value, label: value }))]} />
         </label>
         <label className="flex items-center gap-2 text-xs text-muted">
           年份
-          <select aria-label={`${section.title}年份`} className="input py-1.5 text-sm min-w-0" value={year} onChange={(event) => setYear(event.target.value)}>
-            <option value="">全部年份</option>
-            {DOUBAN_YEARS.map((option) => <option key={option.value} value={option.value}>{option.title}</option>)}
-          </select>
+          <Dropdown ariaLabel={`${section.title}年份`} value={year} onChange={(year) => setFilters(category, { year })} options={[{ value: '', label: '全部年份' }, ...DOUBAN_YEARS.map(({ value, title }) => ({ value, label: title }))]} />
         </label>
         {(region || genre || year || sort !== 'hot') && (
-          <button type="button" className="text-xs text-accent hover:underline" onClick={() => { setSort('hot'); setRegion(''); setGenre(''); setYear(''); }}>重置筛选</button>
+          <button type="button" className="text-xs text-accent hover:underline" onClick={() => setFilters(category, DEFAULT_BROWSE_FILTERS)}>重置筛选</button>
         )}
       </div>
 
@@ -131,8 +126,8 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5" aria-busy={query.isFetchingNextPage}>
-              {items.map((item) => <DoubanCard key={item.id} item={item} onClick={() => onPick(item.title)} />)}
+            <div data-tv-grid className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5" aria-busy={query.isFetchingNextPage}>
+              {items.map((item) => <DoubanCard key={item.id} item={item} focusId={`${category}:${item.id}`} onClick={() => onPick(item.title)} />)}
             </div>
             <div className="flex flex-col items-center gap-2 mt-5">
               <p className="text-xs text-faint" aria-live="polite">已显示 {items.length} 部{!query.hasNextPage ? ' · 已加载全部结果' : ''}</p>
@@ -149,11 +144,12 @@ function DoubanCategorySection({ category, onPick }: { category: DoubanCategory;
 }
 
 /** Bangumi 每日放送：星期筛选，一次拉全量无分页 */
-function BangumiView({ onPick }: { onPick: (title: string) => void }) {
+function BangumiView({ onPick, active }: { onPick: (title: string) => void; active: boolean }) {
   const [weekday, setWeekday] = useState<number | 'all'>('all');
 
   const query = useQuery({
     queryKey: ['bangumi-calendar'],
+    enabled: active,
     queryFn: ({ signal }) => api.bangumiCalendar(signal),
   });
 
@@ -202,11 +198,12 @@ const HOT_LISTS = [
 ];
 
 /** 影视热榜（60s API）：豆瓣五个周榜 + 百度热播剧，chips 切换 */
-function HotListView({ onPick }: { onPick: (title: string) => void }) {
+function HotListView({ onPick, active }: { onPick: (title: string) => void; active: boolean }) {
   const [listId, setListId] = useState(HOT_LISTS[0].id);
 
   const query = useQuery({
     queryKey: ['hot-list', listId],
+    enabled: active,
     queryFn: ({ signal }) => api.hotList(listId, signal),
   });
 

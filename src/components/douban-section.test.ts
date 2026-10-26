@@ -42,8 +42,7 @@ describe('Four-category recommendation layout', () => {
       expect(section).toContain(`aria-label="${title}类型"`);
       expect(section).toContain(`aria-label="${title}年份"`);
       expect(section).toContain('全部年份');
-      expect(section).toContain(`<option value="${new Date().getUTCFullYear()}">`);
-      expect(section).toContain('<option value="1990-1999">1990–1999</option>');
+      expect(section).toContain('aria-haspopup="listbox"');
       expect(section).toContain(`aria-label="加载更多${title}"`);
       expect(section).toContain('按豆瓣近期热度推荐');
     }

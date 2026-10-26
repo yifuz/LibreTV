@@ -16,6 +16,8 @@ import { useToast } from '@/components/toast';
 import { EmptyState } from '@/components/states';
 import { Icon } from '@/components/icon';
 import { SiteFooter } from '@/components/site-footer';
+import { useHomeBrowsePosition } from '@/components/use-home-browse-position';
+import { saveHomeBrowsePosition } from '@/lib/home-browse-state';
 
 /**
  * 首页：搜索（URL ?s= 驱动，可后退/分享）+ 豆瓣推荐。
@@ -37,6 +39,7 @@ function HomeContent() {
   const router = useRouter();
   const { toast } = useToast();
   const urlQuery = searchParams.get('s') || '';
+  useHomeBrowsePosition(!urlQuery);
   // 精确订阅所需字段（对齐 live 页的做法）：搜索流式期间逐源写健康度、
   // 打开设置抽屉/历史面板等无关 store 变化，都不应触发首页整树重渲染
   const customAPIs = useAppStore((s) => s.customAPIs);
@@ -130,6 +133,7 @@ function HomeContent() {
       toast('请先在设置中添加并勾选点播源', 'warning');
       return;
     }
+    if (!urlQuery) saveHomeBrowsePosition();
     router.push(`/?s=${encodeURIComponent(query)}`, { scroll: false });
     searchHistory.record(query);
   };
@@ -365,14 +369,15 @@ function HomeContent() {
         )}
 
         {/* 首页推荐（有搜索时隐藏） */}
-        {!urlQuery && (
+        <div hidden={Boolean(urlQuery)}>
           <RecommendSection
+            active={!urlQuery}
             onPick={(title) => {
               setInput(title);
               runSearch(title);
             }}
           />
-        )}
+        </div>
       </main>
 
       <SiteFooter />

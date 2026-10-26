@@ -34,8 +34,12 @@ export function Dropdown({
   /** 键盘 / 悬停高亮项下标；-1 表示无高亮 */
   const [active, setActive] = useState(-1);
   const rootRef = useRef<HTMLDivElement>(null);
+  const activeOptionRef = useRef<HTMLButtonElement>(null);
 
   const selected = options.find((o) => o.value === value);
+  useEffect(() => {
+    if (open) activeOptionRef.current?.scrollIntoView?.({ block: 'nearest' });
+  }, [open, active]);
 
   // 展开期间监听外部点击收起
   useEffect(() => {
@@ -131,6 +135,7 @@ export function Dropdown({
                 <button
                   type="button"
                   role="option"
+                  ref={i === active ? activeOptionRef : undefined}
                   aria-selected={isSelected}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => pick(o.value)}
