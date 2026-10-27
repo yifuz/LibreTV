@@ -19,7 +19,7 @@ npm run setup:local
 npm run setup:local -- recommended
 ```
 
-可选 `default`、`recommended`、`full`、`movies`、`tv`、`variety`、`anime`、`live`。若已有 `.env.local`，修改源使用下方的独立导入脚本，初始化脚本不会覆盖它。
+可选 `default`、`recommended`、`full`、`movies`、`tv`、`variety`、`anime`、`4k`、`live`。若已有 `.env.local`，修改源使用下方的独立导入脚本，初始化脚本不会覆盖它。
 
 ## Node.js 运行
 
@@ -98,6 +98,8 @@ node source-pack/apply-sources.mjs . full
 ```
 
 脚本保留密码和其他设置，对已有环境文件创建 `.env.sources-backup.<时间>.local` 备份。完成后重启服务。`default` 对应原部署的 5 个点播源和 1 个直播列表，`recommended` 为 8 个点播源和 1 个直播列表；其余清单见 [迁移包说明](../source-pack/README.md)。
+
+`4k` 清单含 1 个通过搜索与 3840 像素宽样片检查的接口，不含直播列表。新设备可运行 `npm run setup:local -- 4k`；已有部署可先运行 `node source-pack/apply-sources.mjs . 4k --dry-run`，确认后去掉 `--dry-run`。应用清单会替换点播和直播环境配置，因此 `4k` 会把 `DEFAULT_LIVE_SOURCES` 设为 `[]`。需要保留原有源时，可在“设置 → 源管理 → 数据源订阅”添加 `https://raw.githubusercontent.com/yifuz/LibreTV/main/source-pack/sources-4k.json`。样片、未通过的候选和检查边界见 [4K 验证记录](../source-pack/VALIDATION-4K.md)。
 
 ## 更新与备份
 

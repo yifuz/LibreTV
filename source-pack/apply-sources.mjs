@@ -4,13 +4,13 @@ import { fileURLToPath } from 'node:url';
 
 const args = process.argv.slice(2);
 if (!args.length || args.includes('--help')) {
-  console.log('Usage: node apply-sources.mjs <LibreTV-directory> [default|recommended|full|movies|tv|variety|anime|live] [--env-file=.env.local|.env] [--dry-run]');
+  console.log('Usage: node apply-sources.mjs <LibreTV-directory> [default|recommended|full|movies|tv|variety|anime|4k|live] [--env-file=.env.local|.env] [--dry-run]');
   process.exit(args.includes('--help') ? 0 : 1);
 }
 const projectDir = path.resolve(args[0]);
 const profile = args.find((value, i) => i > 0 && !value.startsWith('--')) || 'recommended';
 const envName = args.find((value) => value.startsWith('--env-file='))?.split('=')[1] || '.env.local';
-if (!['default', 'recommended', 'full', 'movies', 'tv', 'variety', 'anime', 'live'].includes(profile)) throw new Error('Unknown source profile: ' + profile);
+if (!['default', 'recommended', 'full', 'movies', 'tv', 'variety', 'anime', '4k', 'live'].includes(profile)) throw new Error('Unknown source profile: ' + profile);
 if (!['.env', '.env.local'].includes(envName)) throw new Error('Only .env and .env.local are supported');
 const pkgPath = path.join(projectDir, 'package.json');
 if (!fs.existsSync(pkgPath) || JSON.parse(fs.readFileSync(pkgPath, 'utf8')).name !== 'libretv') {

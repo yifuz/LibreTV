@@ -3,7 +3,7 @@ import path from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const profiles = ['default', 'recommended', 'full', 'movies', 'tv', 'variety', 'anime', 'live'];
+const profiles = ['default', 'recommended', 'full', 'movies', 'tv', 'variety', 'anime', '4k', 'live'];
 
 /** Create device-specific credentials once. Existing environment files stay intact. */
 export function setupLocalEnv(projectDir, profile = 'default') {

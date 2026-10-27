@@ -1,0 +1,8 @@
+{
+  "name": "LibreTV-Settings",
+  "time": "1793087476647",
+  "cfgVer": "2.0.0",
+  "data": {
+    "libretv-settings": "{\"state\":{\"customAPIs\":[{\"name\":\"最大资源\",\"url\":\"https://api.zuidapi.com/api.php/provide/vod\",\"isAdult\":false,\"key\":\"custom_0\"}],\"selectedKeys\":[\"custom_0\"],\"liveSubscriptions\":[],\"liveSelectedUrls\":[],\"subscriptions\":[],\"envKeysSeen\":[],\"liveEnvKeysSeen\":[],\"envSubsSeen\":[],\"sourceHealth\":{},\"qualityMap\":{},\"yellowFilter\":true,\"adFilter\":true,\"recommendSource\":\"douban\",\"recommendSourceTouched\":true,\"doubanEnabled\":true},\"version\":2}"
+  }
+}

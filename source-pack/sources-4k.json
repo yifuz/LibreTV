@@ -1,0 +1,12 @@
+{
+  "name": "LibreTV Source Pack - 4k",
+  "version": 2,
+  "sources": [
+    {
+      "name": "最大资源",
+      "url": "https://api.zuidapi.com/api.php/provide/vod",
+      "isAdult": false
+    }
+  ],
+  "liveSources": []
+}

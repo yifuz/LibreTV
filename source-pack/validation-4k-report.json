@@ -1,0 +1,309 @@
+{
+  "checkedDate": "2026-10-27",
+  "timezone": "Asia/Shanghai",
+  "appVersion": "2.19.7",
+  "method": "公开 JSON 接口低频请求；使用项目 CMS 解析器检查搜索与详情；每个样片只读少量播放清单和至多 1 MiB 分片，在本地用 ffprobe 检查编码尺寸。没有播放全片、没有访问豆瓣推荐接口。",
+  "scope": "Incremental 4K checks only; historical profiles were not retested.",
+  "usableSources": [
+    {
+      "name": "最大资源",
+      "url": "https://api.zuidapi.com/api.php/provide/vod",
+      "isAdult": false
+    }
+  ],
+  "candidates": [
+    {
+      "name": "快车",
+      "url": "https://caiji.kuaichezy.org/api.php/provide/vod",
+      "search": "暂不支持搜索",
+      "suitableForCurrentLibreTV": false
+    },
+    {
+      "name": "闪电",
+      "url": "https://sdzyapi.com/api.php/provide/vod",
+      "search": "暂不支持搜索",
+      "suitableForCurrentLibreTV": false
+    },
+    {
+      "name": "索尼",
+      "url": "https://suoniapi.com/api.php/provide/vod",
+      "search": "暂不支持搜索",
+      "suitableForCurrentLibreTV": false
+    }
+  ],
+  "compatibility": [
+    {
+      "name": "快车资源（含4K）",
+      "url": "https://caiji.kuaichezy.org/api.php/provide/vod",
+      "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON"
+    },
+    {
+      "name": "最大资源（含4K）",
+      "url": "https://api.zuidapi.com/api.php/provide/vod",
+      "status": 200,
+      "code": 1,
+      "keyword": "攻壳机动队4K",
+      "searchCount": 1,
+      "matched": true,
+      "detailEpisodeCount": 1,
+      "playableHls": true
+    },
+    {
+      "name": "闪电资源（含4K）",
+      "url": "https://sdzyapi.com/api.php/provide/vod",
+      "error": "Unexpected token '暂', \"暂不支持搜索\" is not valid JSON"
+    }
+  ],
+  "samples": [
+    {
+      "name": "快车",
+      "api": "https://caiji.kuaichezy.org/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:36:36.318Z",
+      "sample": {
+        "id": 121551,
+        "title": "怪物史瑞克2国语4K",
+        "remarks": "更新4K"
+      },
+      "playlistUrl": "https://v13.kuaichezym3u8.com/yyv13/202512/18/ykB2vmzqqD27/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v13.kuaichezym3u8.com/yyv13/202512/18/ykB2vmzqqD27/video/2000k_1080/hls/index.m3u8",
+          "width": 2006,
+          "height": 1080
+        }
+      ],
+      "mediaPlaylistUrl": "https://v13.kuaichezym3u8.com/yyv13/202512/18/ykB2vmzqqD27/video/2000k_1080/hls/index.m3u8",
+      "segmentUrl": "https://yyv13.qwe132456.cc/yyv13/202512/18/ykB2vmzqqD27/video/2000k_1080/hls/j9or1GW8M4.ts",
+      "sampleBytes": 424128,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 2006,
+          "height": 1080,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    },
+    {
+      "name": "最大",
+      "api": "https://api.zuidapi.com/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:36:44.810Z",
+      "sample": {
+        "id": 117536,
+        "title": "攻壳机动队4K",
+        "remarks": "更新4K"
+      },
+      "playlistUrl": "https://v14.zuidazym3u8.com/yyv14/202512/24/u6KERkD8e322/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v14.zuidazym3u8.com/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/index.m3u8",
+          "width": 3840,
+          "height": 2074
+        }
+      ],
+      "mediaPlaylistUrl": "https://v14.zuidazym3u8.com/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/index.m3u8",
+      "segmentUrl": "https://yyv14.qwe132456.cc/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/CesJG9wWzD.ts",
+      "sampleBytes": 62604,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2074,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    },
+    {
+      "name": "索尼",
+      "api": "https://suoniapi.com/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:36:52.376Z",
+      "sample": {
+        "id": 135588,
+        "title": "花束般的恋爱4K",
+        "remarks": "4K"
+      },
+      "playlistUrl": "https://v13.rstu6.com/202601/01/rT5mVnErU822/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v13.rstu6.com/202601/01/rT5mVnErU822/video/4000k_1080/hls/index.m3u8",
+          "width": 1994,
+          "height": 1080
+        }
+      ],
+      "mediaPlaylistUrl": "https://v13.rstu6.com/202601/01/rT5mVnErU822/video/4000k_1080/hls/index.m3u8",
+      "segmentUrl": "https://snv13.tscjzy.com/202601/01/rT5mVnErU822/video/4000k_1080/hls/9qCgKt9gFx.ts",
+      "sampleBytes": 533732,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1994,
+          "height": 1080,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    },
+    {
+      "name": "闪电",
+      "api": "https://sdzyapi.com/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:37:00.603Z",
+      "sample": {
+        "id": 125194,
+        "title": "无人知晓4K",
+        "remarks": "更新4K"
+      },
+      "playlistUrl": "https://v13.qqqrst.com/yyv13/202512/27/PgNtV8CSbr22/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v13.qqqrst.com/yyv13/202512/27/PgNtV8CSbr22/video/4000k_2160/hls/index.m3u8",
+          "width": 1792,
+          "height": 1080
+        }
+      ],
+      "mediaPlaylistUrl": "https://v13.qqqrst.com/yyv13/202512/27/PgNtV8CSbr22/video/4000k_2160/hls/index.m3u8",
+      "segmentUrl": "https://yyv13.qwe132456.cc/yyv13/202512/27/PgNtV8CSbr22/video/4000k_2160/hls/W8vjKh26oU.ts",
+      "sampleBytes": 27824,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1792,
+          "height": 1080,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    },
+    {
+      "name": "快车",
+      "api": "https://caiji.kuaichezy.org/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:37:54.635Z",
+      "sample": {
+        "id": 120100,
+        "title": "攻壳机动队4K",
+        "remarks": "更新4K"
+      },
+      "playlistUrl": "https://v14.kuaichezym3u8.com/yyv14/202512/24/u6KERkD8e322/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v14.kuaichezym3u8.com/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/index.m3u8",
+          "width": 3840,
+          "height": 2074
+        }
+      ],
+      "mediaPlaylistUrl": "https://v14.kuaichezym3u8.com/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/index.m3u8",
+      "segmentUrl": "https://yyv14.qwe132456.cc/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/CesJG9wWzD.ts",
+      "sampleBytes": 62604,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2074,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    },
+    {
+      "name": "索尼",
+      "api": "https://suoniapi.com/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:38:02.330Z",
+      "sample": {
+        "id": 135590,
+        "title": "美国往事国语4K",
+        "remarks": "4K"
+      },
+      "playlistUrl": "https://v14.rstu6.com/202601/01/nyWUUH20Hj27/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v14.rstu6.com/202601/01/nyWUUH20Hj27/video/4000k_1080/hls/index.m3u8",
+          "width": 1920,
+          "height": 1036
+        }
+      ],
+      "mediaPlaylistUrl": "https://v14.rstu6.com/202601/01/nyWUUH20Hj27/video/4000k_1080/hls/index.m3u8",
+      "segmentUrl": "https://snv14.tscjzy.com/202601/01/nyWUUH20Hj27/video/4000k_1080/hls/GU0wO8K2sr.ts",
+      "sampleBytes": 77456,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1036,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    },
+    {
+      "name": "闪电",
+      "api": "https://sdzyapi.com/api.php/provide/vod/",
+      "checkedAt": "2026-10-27T07:38:09.998Z",
+      "sample": {
+        "id": 123732,
+        "title": "攻壳机动队4K",
+        "remarks": "更新4K"
+      },
+      "playlistUrl": "https://v14.qqqrst.com/yyv14/202512/24/u6KERkD8e322/video/index.m3u8",
+      "declaredVariants": [
+        {
+          "url": "https://v14.qqqrst.com/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/index.m3u8",
+          "width": 3840,
+          "height": 2074
+        }
+      ],
+      "mediaPlaylistUrl": "https://v14.qqqrst.com/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/index.m3u8",
+      "segmentUrl": "https://yyv14.qwe132456.cc/yyv14/202512/24/u6KERkD8e322/video/4000k_2160/hls/CesJG9wWzD.ts",
+      "sampleBytes": 62604,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 3840,
+          "height": 2074,
+          "pix_fmt": "yuv420p"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "segmentCheck": "ffprobe-local-prefix"
+    }
+  ],
+  "limitations": [
+    "编码尺寸检查无法证明母版原生 4K、HDR、原盘码率或长时间播放稳定性。",
+    "快车、最大、闪电抽查的《攻壳机动队4K》最终分片 URL 相同，不能视为三个独立上游。",
+    "快车《怪物史瑞克2国语4K》、闪电《无人知晓4K》及索尼两部带 4K 标签的样片实际高度为 1080 或 1036 像素。"
+  ]
+}

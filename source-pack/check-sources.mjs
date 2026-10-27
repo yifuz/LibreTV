@@ -4,12 +4,12 @@ import { fileURLToPath } from 'node:url';
 
 const args = process.argv.slice(2);
 if (args.includes('--help')) {
-  console.log('Usage: node check-sources.mjs [recommended|full|movies|tv|variety|anime] [--keyword=关键词] [--output=report.json]');
+  console.log('Usage: node check-sources.mjs [recommended|full|movies|tv|variety|anime|4k] [--keyword=关键词] [--output=report.json]');
   process.exit(0);
 }
 const profile = args.find((arg) => !arg.startsWith('--')) || 'recommended';
-if (!['recommended', 'full', 'movies', 'tv', 'variety', 'anime'].includes(profile)) throw new Error('Unknown profile');
-const keyword = args.find((arg) => arg.startsWith('--keyword='))?.slice('--keyword='.length) || ({ movies: '流浪地球', tv: '庆余年', variety: '你好星期六' }[profile] || '葬送的芙莉莲');
+if (!['recommended', 'full', 'movies', 'tv', 'variety', 'anime', '4k'].includes(profile)) throw new Error('Unknown profile');
+const keyword = args.find((arg) => arg.startsWith('--keyword='))?.slice('--keyword='.length) || ({ movies: '流浪地球', tv: '庆余年', variety: '你好星期六', '4k': '攻壳机动队4K' }[profile] || '葬送的芙莉莲');
 const packDir = path.dirname(fileURLToPath(import.meta.url));
 const sources = JSON.parse(fs.readFileSync(path.join(packDir, `sources-${profile}.json`), 'utf8')).sources;
 const results = [];
